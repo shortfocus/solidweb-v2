@@ -45,22 +45,22 @@ export const siteConfig = {
     subtitle: "차별화된 경쟁력으로 고객사의 성공을 지원합니다.",
     items: [
       {
-        number: "01",
+        icon: "shield" as const,
         title: "전문성",
         description: "다양한 분야의 전문가들이 모여 최적의 솔루션을 제공합니다.",
       },
       {
-        number: "02",
+        icon: "lightbulb" as const,
         title: "혁신성",
         description: "최신 기술 트렌드를 반영하여 혁신적인 서비스를 제공합니다.",
       },
       {
-        number: "03",
+        icon: "heart" as const,
         title: "고객 중심",
         description: "고객의 니즈를 최우선으로 생각하며, 최상의 만족도를 제공합니다.",
       },
       {
-        number: "04",
+        icon: "trending-up" as const,
         title: "지속적인 성장",
         description: "고객사와 함께 성장하며, 지속적인 발전을 추구합니다.",
       },
