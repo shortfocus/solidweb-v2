@@ -6,10 +6,13 @@ import { siteConfig } from "@/config/site.config";
 ---
 
 <!doctype html>
-<html lang="ko">
+<html lang="ko" class="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet" />
     <title>{siteConfig.name}</title>
     <meta name="description" content={siteConfig.description} />
 
@@ -18,7 +21,7 @@ import { siteConfig } from "@/config/site.config";
     <meta property="og:description" content={siteConfig.description} />
     <meta property="og:type" content="website" />
   </head>
-  <body class="flex min-h-screen flex-col bg-slate-950 text-slate-100">
+  <body class="flex min-h-screen flex-col bg-background text-foreground">
     <Header />
     <main class="flex-1">
       <slot />
@@ -27,7 +30,7 @@ import { siteConfig } from "@/config/site.config";
     <!-- 카카오톡 플로팅: 클릭 시 카카오 페이지로 바로 이동 -->
     <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
       <a
-        href="https://pf.kakao.com/_xkxmzqX/chat"
+        href={siteConfig.kakaoChatUrl}
         target="_blank"
         rel="noopener noreferrer"
         class="flex items-center justify-center gap-1.5 rounded-full bg-[#FEE500] px-5 py-3 text-[#191919] shadow-lg transition hover:scale-105 hover:shadow-xl"
@@ -36,7 +39,7 @@ import { siteConfig } from "@/config/site.config";
         <span class="text-sm font-bold">톡상담</span>
       </a>
       <a
-        href="https://pf.kakao.com/_xkxmzqX"
+        href={siteConfig.kakaoChannelUrl}
         target="_blank"
         rel="noopener noreferrer"
         class="flex items-center justify-center gap-1.5 rounded-full bg-[#FEE500] px-5 py-3 text-[#191919] shadow-lg transition hover:scale-105 hover:shadow-xl"

@@ -1,0 +1,51 @@
+---
+import { siteConfig } from "@/config/site.config";
+---
+
+<section
+  id="contact"
+  class="border-t border-slate-800 bg-[#0d0d0d] py-20 md:py-28"
+>
+  <div class="mx-auto max-w-6xl px-6">
+    <h2 class="text-2xl font-bold text-white md:text-3xl">
+      {siteConfig.contact.title}
+    </h2>
+    <p class="mt-3 text-slate-400">
+      {siteConfig.contact.subtitle}
+    </p>
+
+    <!-- 연락처 + SNS 아이콘 -->
+    <div class="mt-14 flex flex-wrap items-center gap-8 text-slate-400">
+      <a href={`tel:${siteConfig.contact.phone.replace(/-/g, "")}`} class="flex items-center gap-2 hover:text-white transition">
+        <span aria-hidden="true">📞</span>
+        {siteConfig.contact.phone}
+      </a>
+      <a href={`mailto:${siteConfig.contact.email}`} class="flex items-center gap-2 hover:text-white transition">
+        <span aria-hidden="true">✉️</span>
+        {siteConfig.contact.email}
+      </a>
+      <a
+        href={siteConfig.kakaoChatUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex h-10 w-10 items-center justify-center rounded bg-[#FEE500] text-[#191919] hover:opacity-90"
+        aria-label="카카오톡"
+      >
+        <span class="text-lg">💬</span>
+      </a>
+      <a href="#" class="text-slate-500 hover:text-white" aria-label="Instagram">Instagram</a>
+      <a href="#" class="text-slate-500 hover:text-white" aria-label="Facebook">Facebook</a>
+      <a href="#" class="text-slate-500 hover:text-white" aria-label="Naver Blog">Naver Blog</a>
+    </div>
+
+    <p class="mt-12 text-lg text-white">
+      {siteConfig.contact.ctaTitle}
+    </p>
+    <a
+      href="#"
+      class="mt-6 inline-flex rounded-lg border-2 border-white bg-white px-8 py-4 text-base font-semibold text-slate-900 hover:bg-slate-100 transition"
+    >
+      {siteConfig.contact.ctaButton}
+    </a>
+  </div>
+</section>

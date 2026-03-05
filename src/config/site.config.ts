@@ -1,33 +1,117 @@
 export const siteConfig = {
-  name: "솔리드웹",
-  description: "비즈니스에 집중하게 만드는 웹사이트",
+  name: "solidweb",
+  description: "생각을 응원하는 곳, 우리와 함께합니다.",
   hero: {
-    title: "고객을 부르는 웹사이트",
-    subtitle: "빠르고, 단순하고, 성과 중심",
-    ctaText: "문의하기",
+    title: "생각을 응원하는 곳 우리와 함께합니다.",
+    subtitle: "더 나은 비즈니스 환경을 위해 노력합니다.",
+    ctaText: "서비스 문의",
   },
-  features: [
-    {
-      title: "빠른 제작",
-      description: "불필요한 기능 없이 바로 시작",
-    },
-    {
-      title: "SEO 최적화",
-      description: "검색에 잘 걸리는 구조",
-    },
-    {
-      title: "유지비 없음",
-      description: "서버 관리 필요 없음",
-    },
-  ],
-  cta: {
-    title: "지금 바로 시작하세요",
-    buttonText: "상담 요청",
+  nav: {
+    consult: "상담 신청",
   },
-  /**
-   * 카카오톡 채널 1:1 채팅 URL
-   * 형식: https://pf.kakao.com/_채널ID/chat (채널ID 앞에 _ 필수)
-   * 정확한 주소: center-pf.kakao.com → 프로필 → 프로필 설정 → "채팅 링크" 복사
-   */
-  kakaoChatUrl: "http://pf.kakao.com/_xkxmzqX",
+  filter: ["전체보기", "솔루션", "웹/앱", "브랜딩", "마케팅"],
+  whatWeDo: {
+    title: "01 What We Do",
+    subtitle: "우리는 다양한 분야에서 차별화된 비즈니스를 제공합니다.",
+    items: [
+      {
+        number: 1,
+        title: "서비스 기획",
+        description: "체계적인 기획부터 완성도 높은 설계까지 차별화된 서비스 경험을 제공합니다.",
+        list: ["서비스 기획 및 설계", "디자인 및 개발", "운영 및 유지보수"],
+      },
+      {
+        number: 2,
+        title: "웹/앱 개발",
+        description: "전문적인 개발 기술력으로 사용자에게 최적화된 웹/앱 서비스를 제공합니다.",
+        list: ["프론트엔드 개발", "백엔드 개발", "모바일 앱 개발"],
+      },
+      {
+        number: 3,
+        title: "브랜딩",
+        description: "고객사의 브랜드를 이해하고 차별화된 브랜드 가치를 구축합니다.",
+        list: ["브랜드 전략 수립", "BI/CI 디자인", "마케팅 컨설팅"],
+      },
+    ],
+  },
+  ourStrength: {
+    title: "02 Our Strength",
+    subtitle: "차별화된 경쟁력으로 고객사의 성공을 지원합니다.",
+    items: [
+      {
+        number: "01",
+        title: "전문성",
+        description: "다양한 분야의 전문가들이 모여 최적의 솔루션을 제공합니다.",
+      },
+      {
+        number: "02",
+        title: "혁신성",
+        description: "최신 기술 트렌드를 반영하여 혁신적인 서비스를 제공합니다.",
+      },
+      {
+        number: "03",
+        title: "고객 중심",
+        description: "고객의 니즈를 최우선으로 생각하며, 최상의 만족도를 제공합니다.",
+      },
+      {
+        number: "04",
+        title: "지속적인 성장",
+        description: "고객사와 함께 성장하며, 지속적인 발전을 추구합니다.",
+      },
+    ],
+  },
+  projects: {
+    title: "03 Our Projects",
+    subtitle: "우리의 성공적인 프로젝트들을 만나보세요.",
+    featured: {
+      title: "ISAC Food",
+      description: "ISAC Food는 (주)이삭푸드의 새로운 브랜드 아이덴티티 구축 및 웹사이트 개발 프로젝트입니다.",
+    },
+    items: [
+      { title: "Project A", desc: "웹/앱 개발" },
+      { title: "Project B", desc: "브랜딩" },
+      { title: "Project C", desc: "마케팅" },
+      { title: "Project D", desc: "솔루션" },
+      { title: "Project E", desc: "웹/앱" },
+      { title: "Project F", desc: "브랜딩" },
+    ],
+  },
+  review: {
+    title: "04 Review",
+    subtitle: "고객들의 솔직한 후기를 들어보세요.",
+    items: [
+      { quote: "전문적이고 신뢰할 수 있는 파트너였습니다.", author: "A사 대표" },
+      { quote: "기대 이상의 결과물을 받았습니다.", author: "B사 마케팅팀" },
+      { quote: "소통이 원활하고 진행이 빠릅니다.", author: "C사 기획팀" },
+    ],
+  },
+  faq: {
+    title: "05 FAQ",
+    subtitle: "자주 묻는 질문들을 확인해보세요.",
+    items: [
+      { q: "어떤 서비스를 제공하나요?", a: "웹/앱 개발, 브랜딩, 마케팅 등 다양한 분야의 서비스를 제공합니다." },
+      { q: "프로젝트 진행 절차는 어떻게 되나요?", a: "상담 → 기획 → 설계 → 개발 → 테스트 → 런칭 순으로 진행됩니다." },
+      { q: "견적은 어떻게 받을 수 있나요?", a: "상담 신청을 통해 요구사항을 전달해 주시면 맞춤 견적을 안내해 드립니다." },
+      { q: "프로젝트 기간은 얼마나 걸리나요?", a: "프로젝트 규모에 따라 상이하며, 상담 시 일정을 함께 조율합니다." },
+      { q: "계약은 어떻게 진행되나요?", a: "견적 확정 후 계약서를 통해 정식 계약을 진행합니다." },
+      { q: "유지보수도 가능한가요?", a: "네, 런칭 후 유지보수 및 운영 지원도 가능합니다." },
+    ],
+  },
+  contact: {
+    title: "06 Contact Us",
+    subtitle: "궁금한 점이 있다면 언제든지 문의해주세요.",
+    phone: "010-0000-0000",
+    email: "email@example.com",
+    ctaTitle: "지금 바로 상담 신청하고 더 나은 비즈니스 환경을 경험하세요.",
+    ctaButton: "상담 신청하기",
+  },
+  footer: {
+    address: "서울특별시 강남구 테헤란로 123 (솔리드웹)",
+    businessNumber: "사업자등록번호: 123-45-67890",
+    services: ["웹/앱 개발", "브랜딩", "마케팅"],
+    terms: "이용약관",
+    privacy: "개인정보처리방침",
+  },
+  kakaoChatUrl: "https://pf.kakao.com/_xkxmzqX/chat",
+  kakaoChannelUrl: "https://pf.kakao.com/_xkxmzqX",
 } as const;
