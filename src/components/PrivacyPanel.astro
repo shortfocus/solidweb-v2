@@ -117,10 +117,10 @@ import { siteConfig } from "@/config/site.config";
 <script>
   (function () {
     const panel = document.getElementById("privacy-panel");
-    const openTrigger = document.getElementById("open-privacy");
+    const openTriggers = document.querySelectorAll(".privacy-open-trigger");
     const closeButtons = document.querySelectorAll("[data-privacy-close]");
 
-    if (!panel || !openTrigger) return;
+    if (!panel || openTriggers.length === 0) return;
 
     const panelEl = panel;
 
@@ -136,9 +136,11 @@ import { siteConfig } from "@/config/site.config";
       document.body.style.overflow = "";
     }
 
-    openTrigger.addEventListener("click", (e) => {
-      e.preventDefault();
-      open();
+    openTriggers.forEach((trigger) => {
+      trigger.addEventListener("click", (e) => {
+        e.preventDefault();
+        open();
+      });
     });
 
     closeButtons.forEach((btn) => {
