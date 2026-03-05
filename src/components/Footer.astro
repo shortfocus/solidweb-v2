@@ -8,7 +8,10 @@ const year = new Date().getFullYear();
     <div class="grid gap-10 md:grid-cols-2">
       <div>
         <h3 class="font-logo text-xl font-bold text-white">{siteConfig.name}</h3>
-        <p class="mt-3 text-sm text-slate-400 leading-relaxed">{siteConfig.footer.address}</p>
+        <p class="mt-3 text-sm text-slate-400 leading-relaxed">
+          {siteConfig.footer.addressLine1}<br />
+          {siteConfig.footer.addressLine2}
+        </p>
         <p class="mt-2 text-xs text-slate-500">대표: {siteConfig.footer.representative}</p>
         <p class="mt-1 text-xs text-slate-500">
           이메일: <a href={`mailto:${siteConfig.contact.email}`} class="hover:text-slate-300">{siteConfig.contact.email}</a>
@@ -19,7 +22,7 @@ const year = new Date().getFullYear();
         </div>
       </div>
       <div class="md:text-right md:flex md:flex-col md:items-end">
-        <h4 class="mb-4 text-sm font-semibold text-slate-200">서비스</h4>
+        <h4 class="my-2 text-sm font-semibold text-slate-200">서비스</h4>
         <ul class="space-y-2 text-sm text-slate-400">
           {(siteConfig.nav.items ?? []).map((item) => (
             <li><a href={item.href} class="hover:text-white">{item.label}</a></li>

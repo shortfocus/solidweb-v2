@@ -121,7 +121,8 @@ export const siteConfig = {
     ctaButton: "상담 신청하기",
   },
   footer: {
-    address: "인천광역시 연수구 인천타워대로 323, 에이동 8층 801호 AB-162 (송도동, 송도 센트로드)",
+    addressLine1: "인천광역시 연수구 인천타워대로 323,",
+    addressLine2: "에이동 8층 801호 AB-162 (송도동, 송도 센트로드)",
     representative: "채희승",
     businessNumber: "사업자등록번호: 603-13-80609",
     services: ["웹/앱 개발", "브랜딩", "마케팅"],

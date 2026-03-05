@@ -37,12 +37,13 @@ import { siteConfig } from "@/config/site.config";
                 <span class="text-[10px] text-slate-400">.sum</span>
               </div>
             </div>
-            <!-- 코드 영역 (Go) -->
-            <div class="flex-1 flex font-mono text-[10px] leading-relaxed overflow-hidden">
+            <!-- 코드 영역 (Go) - 우측 카드 높이에 맞춤, 스크롤 없음 -->
+            <div class="flex flex-1 min-h-0 flex-col font-mono text-[10px] leading-relaxed">
+              <div class="flex min-h-0 flex-1">
               <div class="flex-shrink-0 w-6 text-right text-slate-500 select-none pr-2 border-r border-slate-700/50 leading-relaxed">
-                1<br />2<br />3<br />4<br />5<br />6<br />7<br />8<br />9<br />10<br />11<br />12<br />13<br />14<br />15<br />16<br />17<br />18<br />19<br />20<br />21<br />22
+                1<br />2<br />3<br />4<br />5<br />6<br />7<br />8<br />9<br />10<br />11<br />12<br />13<br />14<br />15<br />16<br />17<br />18<br />19<br />20<br />21<br />22<br />23<br />24<br />25<br />26
               </div>
-              <div class="flex-1 min-w-0 p-2 pl-1 overflow-auto">
+              <div class="flex-1 min-w-0 overflow-hidden p-2 pl-1">
                 <div class="font-mono text-[10px] leading-relaxed text-slate-300">
                   <div><span class="text-slate-500">package</span> <span class="text-white">main</span></div>
                   <div class="h-2"></div>
@@ -50,6 +51,7 @@ import { siteConfig } from "@/config/site.config";
                   <div class="pl-4"><span class="text-slate-400">"context"</span></div>
                   <div class="pl-4"><span class="text-slate-400">"encoding/json"</span></div>
                   <div class="pl-4"><span class="text-slate-400">"net/http"</span></div>
+                  <div class="pl-4"><span class="text-slate-400">"time"</span></div>
                   <div><span class="text-slate-400">)</span></div>
                   <div class="h-2"></div>
                   <div><span class="text-slate-500">type</span> <span class="text-slate-200">Response</span> <span class="text-slate-500">struct</span> <span class="text-slate-400">{</span></div>
@@ -58,32 +60,22 @@ import { siteConfig } from "@/config/site.config";
                   <div><span class="text-slate-400">}</span></div>
                   <div class="h-2"></div>
                   <div><span class="text-slate-500">func</span> <span class="text-white">handler</span><span class="text-slate-400">(w http.ResponseWriter, r *http.Request)</span> <span class="text-slate-400">{</span></div>
-                  <div class="pl-4"><span class="text-slate-200">ctx</span> <span class="text-slate-500">:=</span> r.<span class="text-slate-200">Context</span>()</div>
-                  <div class="pl-4 bg-white/10 border-l-2 border-slate-400 -ml-px"><span class="text-slate-500">if</span> <span class="text-slate-200">_</span>, <span class="text-slate-200">err</span> <span class="text-slate-500">:=</span> <span class="text-white">validateRequest</span>(ctx, r); err <span class="text-slate-500">!=</span> <span class="text-slate-500">nil</span> <span class="text-slate-400">{</span></div>
-                  <div class="pl-8"><span class="text-slate-200">respondError</span>(w, http.StatusBadRequest, err)</div>
+                  <div class="pl-4"><span class="text-slate-200">ctx</span>, <span class="text-slate-200">cancel</span> <span class="text-slate-500">:=</span> <span class="text-slate-200">context</span>.<span class="text-slate-200">WithTimeout</span>(r.<span class="text-slate-200">Context</span>(), <span class="text-slate-200">time</span>.<span class="text-slate-200">Second</span>*<span class="text-slate-200">30</span>)</div>
+                  <div class="pl-4"><span class="text-slate-500">defer</span> <span class="text-slate-200">cancel</span>()</div>
+                  <div class="pl-4 bg-white/10 border-l-2 border-slate-400 -ml-px"><span class="text-slate-500">if</span> <span class="text-slate-200">err</span> <span class="text-slate-500">:=</span> <span class="text-white">validateRequest</span>(ctx, r); <span class="text-slate-200">err</span> <span class="text-slate-500">!=</span> <span class="text-slate-500">nil</span> <span class="text-slate-400">{</span></div>
+                  <div class="pl-8"><span class="text-white">respondError</span>(w, http.<span class="text-slate-200">StatusBadRequest</span>, err)</div>
                   <div class="pl-8"><span class="text-slate-500">return</span></div>
                   <div class="pl-4"><span class="text-slate-400">}</span></div>
                   <div class="pl-4"><span class="text-slate-200">resp</span> <span class="text-slate-500">:=</span> <span class="text-slate-200">Response</span><span class="text-slate-400">{</span>Status: <span class="text-slate-400">"ok"</span>, Message: <span class="text-slate-400">"success"</span><span class="text-slate-400">}</span></div>
-                  <div class="pl-4"><span class="text-slate-200">json</span>.<span class="text-slate-200">NewEncoder</span>(w).<span class="text-slate-200">Encode</span>(resp)</div>
+                  <div class="pl-4">w.<span class="text-slate-200">Header</span>().<span class="text-slate-200">Set</span>(<span class="text-slate-400">"Content-Type"</span>, <span class="text-slate-400">"application/json"</span>)</div>
+                  <div class="pl-4"><span class="text-slate-500">if</span> <span class="text-slate-200">err</span> <span class="text-slate-500">:=</span> <span class="text-slate-200">json</span>.<span class="text-white">NewEncoder</span>(w).<span class="text-slate-200">Encode</span>(resp); err <span class="text-slate-500">!=</span> <span class="text-slate-500">nil</span> <span class="text-slate-400">{</span></div>
+                  <div class="pl-8"><span class="text-slate-200">http</span>.<span class="text-slate-200">Error</span>(w, err.<span class="text-slate-200">Error</span>(), http.<span class="text-slate-200">StatusInternalServerError</span>)</div>
+                  <div class="pl-4"><span class="text-slate-400">}</span></div>
                   <div><span class="text-slate-400">}</span></div>
                 </div>
               </div>
-            </div>
-            <!-- 미니 차트 영역 -->
-            <div class="w-24 flex-shrink-0 border-l border-slate-700/80 bg-slate-800/30 p-2 flex flex-col justify-end gap-1">
-              <div class="flex items-end gap-0.5 h-16">
-                <span class="flex-1 rounded-t bg-slate-600 min-h-[20%]"></span>
-                <span class="flex-1 rounded-t bg-slate-500 min-h-[45%]"></span>
-                <span class="flex-1 rounded-t bg-slate-400 min-h-[80%]"></span>
-                <span class="flex-1 rounded-t bg-slate-500 min-h-[55%]"></span>
-                <span class="flex-1 rounded-t bg-slate-600 min-h-[35%]"></span>
               </div>
-              <span class="text-[8px] text-slate-500 text-center">metrics</span>
             </div>
-          </div>
-          <!-- 하단 브랜딩 (이미지 ZERO STUDIO 스타일 → solidweb) -->
-          <div class="border-t border-slate-700/80 bg-[#0d0d0d] py-3 text-center">
-            <span class="font-logo text-lg font-semibold tracking-tight text-white sm:text-xl">{siteConfig.name}</span>
           </div>
         </div>
       </div>
