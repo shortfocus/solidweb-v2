@@ -9,9 +9,14 @@ export default {
   				from: { transform: "translateY(0)" },
   				to: { transform: "translateY(-50%)" },
   			},
+  			"marquee-diagonal": {
+  				from: { transform: "translate(0, 0)" },
+  				to: { transform: "translate(-10%, -50%)" },
+  			},
   		},
   		animation: {
   			"marquee-vertical": "marquee-vertical var(--duration, 120s) linear infinite",
+  			"marquee-diagonal": "marquee-diagonal var(--duration, 120s) linear infinite",
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

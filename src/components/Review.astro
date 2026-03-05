@@ -4,8 +4,8 @@ import { siteConfig } from "@/config/site.config";
 const items = siteConfig.review.items;
 ---
 
-<section id="review" class="border-t border-slate-800 bg-[#0d0d0d] py-20 md:py-28">
-  <div class="mx-auto max-w-6xl px-6">
+<section id="review" class="border-t border-slate-800 bg-[#0d0d0d] overflow-hidden py-20 md:py-28">
+  <div class="mx-auto max-w-6xl min-w-0 px-4 md:px-6">
     <div class="rounded-2xl border border-slate-800 border-l-4 border-l-[#f43f5e] bg-slate-900/20 px-6 py-5">
       <h2 class="text-2xl font-bold text-white md:text-3xl">
         <span class="text-[#f43f5e]">04</span> Review
@@ -15,17 +15,17 @@ const items = siteConfig.review.items;
       </p>
     </div>
 
-    <div class="mt-14 flex flex-col items-center justify-center gap-4">
-      <div class="relative flex h-[600px] w-full flex-row items-center justify-center overflow-hidden rounded-lg px-4 md:px-8">
-        <div class="flex flex-row items-center gap-3 md:gap-6">
-          <!-- 마키 컬럼 1 -->
-          <div class="group flex max-h-[600px] flex-1 flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-900/20 p-2">
+    <div class="mt-14 flex w-full min-w-0 flex-col items-center justify-center gap-4">
+      <div class="relative flex h-[600px] w-full min-w-0 max-w-full flex-row items-center justify-center overflow-x-hidden overflow-y-hidden rounded-lg px-2 md:px-4">
+        <div class="flex min-w-0 flex-1 flex-row items-stretch gap-2 md:gap-3">
+          <!-- 마키 컬럼 1: 사선 (우하→좌상) -->
+          <div class="group flex max-h-[600px] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-900/20 p-2">
             <div
-              class="flex shrink-0 flex-col gap-4 animate-marquee-vertical group-hover:[animation-play-state:paused]"
+              class="flex shrink-0 flex-col gap-4 animate-marquee-diagonal group-hover:[animation-play-state:paused]"
               style="--duration: 120s"
             >
               {items.map((r) => (
-                <div class="flex flex-1 flex-col gap-4 rounded-xl border border-slate-700 bg-slate-900/40 py-6 shadow-sm">
+                <div class="flex flex-1 flex-col gap-4 rounded-2xl border border-slate-700 bg-slate-900/40 py-6 shadow-sm">
                   <div class="px-6">
                     <div class="flex items-center gap-2.5">
                       <div class="flex flex-col">
@@ -43,9 +43,8 @@ const items = siteConfig.review.items;
                   </div>
                 </div>
               ))}
-              <!-- 루프용 복제 -->
               {items.map((r) => (
-                <div class="flex flex-1 flex-col gap-4 rounded-xl border border-slate-700 bg-slate-900/40 py-6 shadow-sm">
+                <div class="flex flex-1 flex-col gap-4 rounded-2xl border border-slate-700 bg-slate-900/40 py-6 shadow-sm">
                   <div class="px-6">
                     <div class="flex items-center gap-2.5">
                       <div class="flex flex-col">
@@ -66,14 +65,14 @@ const items = siteConfig.review.items;
             </div>
           </div>
 
-          <!-- 마키 컬럼 2 (역방향) -->
-          <div class="group flex max-h-[600px] flex-1 flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-900/20 p-2">
+          <!-- 마키 컬럼 2: 사선 역방향 -->
+          <div class="group flex max-h-[600px] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-900/20 p-2">
             <div
-              class="flex shrink-0 flex-col gap-4 animate-marquee-vertical [animation-direction:reverse] group-hover:[animation-play-state:paused]"
+              class="flex shrink-0 flex-col gap-4 animate-marquee-diagonal [animation-direction:reverse] group-hover:[animation-play-state:paused]"
               style="--duration: 100s"
             >
               {items.map((r) => (
-                <div class="flex flex-1 flex-col gap-4 rounded-xl border border-slate-700 bg-slate-900/40 py-6 shadow-sm">
+                <div class="flex flex-1 flex-col gap-4 rounded-2xl border border-slate-700 bg-slate-900/40 py-6 shadow-sm">
                   <div class="px-6">
                     <div class="flex items-center gap-2.5">
                       <div class="flex flex-col">
@@ -92,7 +91,54 @@ const items = siteConfig.review.items;
                 </div>
               ))}
               {items.map((r) => (
-                <div class="flex flex-1 flex-col gap-4 rounded-xl border border-slate-700 bg-slate-900/40 py-6 shadow-sm">
+                <div class="flex flex-1 flex-col gap-4 rounded-2xl border border-slate-700 bg-slate-900/40 py-6 shadow-sm">
+                  <div class="px-6">
+                    <div class="flex items-center gap-2.5">
+                      <div class="flex flex-col">
+                        <figcaption class="flex items-center gap-1 text-sm font-medium text-white">
+                          {r.author}
+                        </figcaption>
+                        {r.subtitle && (
+                          <p class="text-xs font-medium text-slate-500">{r.subtitle}</p>
+                        )}
+                      </div>
+                    </div>
+                    <blockquote class="mt-3 whitespace-pre-line break-keep text-sm leading-relaxed text-slate-400">
+                      {r.quote}
+                    </blockquote>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- 마키 컬럼 3: 사선 -->
+          <div class="group flex max-h-[600px] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-slate-800 bg-slate-900/20 p-2">
+            <div
+              class="flex shrink-0 flex-col gap-4 animate-marquee-diagonal group-hover:[animation-play-state:paused]"
+              style="--duration: 110s"
+            >
+              {items.map((r) => (
+                <div class="flex flex-1 flex-col gap-4 rounded-2xl border border-slate-700 bg-slate-900/40 py-6 shadow-sm">
+                  <div class="px-6">
+                    <div class="flex items-center gap-2.5">
+                      <div class="flex flex-col">
+                        <figcaption class="flex items-center gap-1 text-sm font-medium text-white">
+                          {r.author}
+                        </figcaption>
+                        {r.subtitle && (
+                          <p class="text-xs font-medium text-slate-500">{r.subtitle}</p>
+                        )}
+                      </div>
+                    </div>
+                    <blockquote class="mt-3 whitespace-pre-line break-keep text-sm leading-relaxed text-slate-400">
+                      {r.quote}
+                    </blockquote>
+                  </div>
+                </div>
+              ))}
+              {items.map((r) => (
+                <div class="flex flex-1 flex-col gap-4 rounded-2xl border border-slate-700 bg-slate-900/40 py-6 shadow-sm">
                   <div class="px-6">
                     <div class="flex items-center gap-2.5">
                       <div class="flex flex-col">
@@ -114,9 +160,11 @@ const items = siteConfig.review.items;
           </div>
         </div>
 
-        <!-- 상·하단 그라데이션 페이드 -->
+        <!-- 사선 페이드: 좌상·우하 + 좌우 -->
         <div class="pointer-events-none absolute inset-x-0 top-0 h-1/4 w-full bg-gradient-to-b from-[#0d0d0d] to-transparent" aria-hidden="true" />
         <div class="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 w-full bg-gradient-to-t from-[#0d0d0d] to-transparent" aria-hidden="true" />
+        <div class="pointer-events-none absolute left-0 inset-y-0 w-1/5 bg-gradient-to-r from-[#0d0d0d] to-transparent" aria-hidden="true" />
+        <div class="pointer-events-none absolute right-0 inset-y-0 w-1/5 bg-gradient-to-l from-[#0d0d0d] to-transparent" aria-hidden="true" />
       </div>
     </div>
   </div>

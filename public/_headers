@@ -1,0 +1,4 @@
+# Cloudflare Pages: CSP 완화 (eval·인라인 허용)
+# https://developers.cloudflare.com/pages/configuration/headers/
+/*
+  Content-Security-Policy: script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'
