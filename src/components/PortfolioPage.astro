@@ -18,10 +18,11 @@ const projects = portfolio.projects;
     </div>
 
     <!-- 프로젝트 그리드 -->
-    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-      {projects.map((p) => (
+    <div id="portfolio-grid" class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {projects.map((p, i) => (
         <article
-          class="flex flex-col rounded-2xl border border-slate-700/80 bg-slate-900/40 overflow-hidden transition hover:border-slate-600"
+          data-portfolio-index={i}
+          class="portfolio-item flex flex-col rounded-2xl border border-slate-700/80 bg-slate-900/40 overflow-hidden transition hover:border-slate-600 {i >= 6 ? 'portfolio-item--hidden' : ''}"
         >
           <!-- 이미지 영역 (플레이스홀더 또는 이미지) -->
           <div class="aspect-[4/3] w-full shrink-0 bg-slate-800">
@@ -37,11 +38,17 @@ const projects = portfolio.projects;
             <h2 class="text-xl font-bold text-white">
               {p.title}
             </h2>
-            <p class="mt-2 flex-1 text-sm text-slate-400 leading-relaxed">
-              {p.description}
-            </p>
+            {p.description ? (
+              <p class="mt-2 flex-1 text-sm text-slate-400 leading-relaxed">
+                {p.description}
+              </p>
+            ) : (
+              <div class="flex-1" />
+            )}
             <a
               href={p.link}
+              target="_blank"
+              rel="noopener noreferrer"
               class="mt-4 inline-flex w-fit items-center justify-center rounded-lg bg-slate-700 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#f43f5e]"
             >
               {portfolio.projectButtonLabel}
@@ -50,5 +57,53 @@ const projects = portfolio.projects;
         </article>
       ))}
     </div>
+    <div id="portfolio-load-more-wrap" class="mt-12 flex justify-center">
+      <button
+        type="button"
+        id="portfolio-load-more"
+        class="rounded-xl bg-slate-700 px-8 py-3.5 text-base font-medium text-white transition hover:bg-[#f43f5e] focus:outline-none focus:ring-2 focus:ring-[#f43f5e] focus:ring-offset-2 focus:ring-offset-[#0d0d0d]"
+      >
+        더보기
+      </button>
+    </div>
   </div>
 </section>
+
+<style>
+  .portfolio-item--hidden {
+    display: none;
+  }
+</style>
+
+<script>
+  (function () {
+    const PAGE_SIZE = 6;
+    const grid = document.getElementById("portfolio-grid");
+    const btn = document.getElementById("portfolio-load-more");
+    const wrap = document.getElementById("portfolio-load-more-wrap");
+    if (!grid || !btn || !wrap) return;
+
+    const gridEl = grid;
+    const wrapEl = wrap;
+
+    const items = Array.from(gridEl.querySelectorAll(".portfolio-item")).sort(
+      (a, b) => Number(a.getAttribute("data-portfolio-index")) - Number(b.getAttribute("data-portfolio-index"))
+    );
+    const total = items.length;
+    let shown = Math.min(PAGE_SIZE, total);
+
+    function updateVisibility() {
+      items.forEach((el, i) => {
+        el.classList.toggle("portfolio-item--hidden", i >= shown);
+      });
+      wrapEl.classList.toggle("hidden", shown >= total);
+    }
+
+    btn.addEventListener("click", function () {
+      shown = Math.min(shown + PAGE_SIZE, total);
+      updateVisibility();
+    });
+
+    updateVisibility();
+  })();
+</script>
