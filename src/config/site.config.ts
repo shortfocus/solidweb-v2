@@ -68,7 +68,7 @@ export const siteConfig = {
   },
   projects: {
     title: "Our Projects",
-    sectionLabel: "#03",
+    sectionLabel: "03",
     descriptionLines: [
       "우리가 함께 만든 프로젝트들은",
       "사용성과 기술, 그리고 디자인의 조화를 추구합니다.",
