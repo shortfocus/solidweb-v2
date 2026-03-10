@@ -1,6 +1,6 @@
 export const siteConfig = {
   name: "solidweb",
-  description: "생각을 응원하는 곳, 우리와 함께합니다.",
+  description: "전환과 성과를 설계하는 웹 에이전시. 홈페이지·브랜딩 기획부터 개발까지.",
   /** OG/Twitter 공유용 이미지 경로 (1200x630 권장). public 폴더 기준, 예: /og-image.webp */
   ogImage: "/og-image.webp",
   /** OG 이미지 대체 텍스트 (카카오톡·네이버 등 미리보기 접근성) */
