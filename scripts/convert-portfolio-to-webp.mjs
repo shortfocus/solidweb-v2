@@ -12,7 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const portfolioDir = join(__dirname, "..", "public", "portfolio");
 
 const EXT = [".png", ".svg"];
-const WEBP_QUALITY = 85;
+const WEBP_QUALITY = 92;
 
 const files = await readdir(portfolioDir);
 const toConvert = files.filter((f) => EXT.some((ext) => f.toLowerCase().endsWith(ext)));

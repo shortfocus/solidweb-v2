@@ -97,6 +97,8 @@ export const siteConfig = {
     description: "솔리드웹은 단순히 기능을 구현하는 데 그치지 않습니다. 사용자 경험을 중심에 두고, 클라이언트의 목표와 사용자의 니즈가 자연스럽게 연결되도록 설계합니다.",
     projectButtonLabel: "상세 보기",
     projects: [
+      { title: "다을건설", description: "신축·공장·주택 전문 다을건설 공식 웹사이트. 완공 실적, 건축 과정, 상담 신청을 담은 책임 시공 브랜딩.", image: "/portfolio/daeul.webp", link: "https://xn--2j1bk00b.com/" },
+      { title: "올라포토", description: "카메라 클래스·리뷰 플랫폼 올라포토 웹사이트. 강의 안내, 카메라/렌즈 리뷰, 장비 팁·커뮤니티 구성.", image: "/portfolio/holaphoto.webp", link: "https://www.holaphoto.com/" },
       { title: "알체라 AI", description: "AI·얼굴인식 기술 기업 알체라의 기업 사이트 및 서비스 소개 페이지 기획·개발.", image: "/portfolio/alchera.webp", link: "http://alcherainc.com/" },
       { title: "LG 유니참", description: "반려동물 전문 브랜드 LG 유니참의 브랜드 사이트 구축 및 반응형 웹 개발.", image: "/portfolio/lgucpet.webp", link: "https://lgucpet.co.kr/" },
       { title: "백상예술대상", description: "영화·TV·연극 등 백상예술대상 공식 웹사이트 제작 및 시상식 정보·티켓팅 UX 설계.", image: "/portfolio/baeksang.webp", link: "https://www.baeksangawards.co.kr/" },
