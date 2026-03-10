@@ -2,5 +2,7 @@
 User-agent: *
 Allow: /
 
+# AI 검색(GPT, Google AI 등) 인용을 위해 AI 크롤러는 차단하지 않음 (User-agent: * Allow: / 유지)
+
 # Sitemap (배포 도메인에 맞게 astro.config.mjs의 site와 일치해야 합니다.)
 Sitemap: https://solidweb.kr/sitemap-index.xml

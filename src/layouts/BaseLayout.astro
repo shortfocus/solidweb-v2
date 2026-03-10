@@ -4,6 +4,75 @@ import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import PrivacyPanel from "@/components/PrivacyPanel.astro";
 import { siteConfig } from "@/config/site.config";
+
+const site = Astro.site;
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const breadcrumbMap: { path: string; name: string }[] = [
+  { path: "/", name: "홈" },
+  { path: "/portfolio", name: "포트폴리오" },
+  { path: "/contact", name: "문의하기" },
+  { path: "/privacy", name: "개인정보처리방침" },
+];
+let breadcrumb: { path: string; name: string }[] = [{ path: "/", name: "홈" }];
+const current = breadcrumbMap.find((b) => b.path === path);
+if (current && current.path !== "/") breadcrumb = [{ path: "/", name: "홈" }, current];
+
+const jsonLdGraph = site
+  ? [
+      {
+        "@type": "Organization",
+        "@id": `${site}/#organization`,
+        name: siteConfig.name,
+        description: siteConfig.description,
+        slogan: siteConfig.hero?.subtitleMain ?? undefined,
+        knowsAbout: ["웹 개발", "앱 개발", "웹사이트 제작", "브랜딩", "서비스 기획", "전환 설계"],
+        url: String(site),
+        logo: { "@type": "ImageObject", url: new URL("/favicon.webp", site).toString() },
+        email: siteConfig.contact?.email ?? undefined,
+        address: siteConfig.footer?.addressLine1
+          ? {
+              "@type": "PostalAddress",
+              streetAddress: [siteConfig.footer.addressLine1, siteConfig.footer.addressLine2].filter(Boolean).join(" "),
+              addressLocality: "인천광역시",
+              addressRegion: "연수구",
+            }
+          : undefined,
+        sameAs: siteConfig.kakaoChannelUrl ? [siteConfig.kakaoChannelUrl] : undefined,
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${site}/#website`,
+        name: siteConfig.name,
+        description: siteConfig.description,
+        url: String(site),
+        publisher: { "@id": `${site}/#organization` },
+        inLanguage: "ko-KR",
+        potentialAction: {
+          "@type": "ContactAction",
+          target: { "@type": "EntryPoint", urlTemplate: String(new URL("/contact", site)) },
+          contactOption: "https://schema.org/ContactPage",
+        },
+      },
+      ...(siteConfig.whatWeDo?.items?.map((item) => ({
+        "@type": "Service",
+        name: item.title,
+        description: item.description,
+        provider: { "@id": `${site}/#organization` },
+      })) ?? []),
+    ]
+  : [];
+const jsonLdBreadcrumb = site
+  ? {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: breadcrumb.map((b, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: b.name,
+        item: String(new URL(b.path, site)),
+      })),
+    }
+  : null;
 ---
 
 <!doctype html>
@@ -65,38 +134,12 @@ import { siteConfig } from "@/config/site.config";
     <meta name="author" content={siteConfig.name} />
     <meta name="format-detection" content="telephone=no" />
 
-    <!-- 구조화 데이터 (JSON-LD): Organization + WebSite -->
-    {Astro.site && (
-      <script type="application/ld+json" set:html={JSON.stringify({
-        "@context": "https://schema.org",
-        "@graph": [
-          {
-            "@type": "Organization",
-            "@id": `${Astro.site}/#organization`,
-            name: siteConfig.name,
-            description: siteConfig.description,
-            url: String(Astro.site),
-            logo: { "@type": "ImageObject", url: new URL("/favicon.webp", Astro.site).toString() },
-            email: siteConfig.contact?.email ?? undefined,
-            address: siteConfig.footer?.addressLine1 ? {
-              "@type": "PostalAddress",
-              streetAddress: [siteConfig.footer.addressLine1, siteConfig.footer.addressLine2].filter(Boolean).join(" "),
-              addressLocality: "인천광역시",
-              addressRegion: "연수구",
-            } : undefined,
-            sameAs: siteConfig.kakaoChannelUrl ? [siteConfig.kakaoChannelUrl] : undefined,
-          },
-          {
-            "@type": "WebSite",
-            "@id": `${Astro.site}/#website`,
-            name: siteConfig.name,
-            description: siteConfig.description,
-            url: String(Astro.site),
-            publisher: { "@id": `${Astro.site}/#organization` },
-            inLanguage: "ko-KR",
-          },
-        ],
-      })} />
+    <!-- 구조화 데이터 (JSON-LD): Organization + WebSite + Service + BreadcrumbList -->
+    {jsonLdGraph.length > 0 && (
+      <script type="application/ld+json" set:html={JSON.stringify({ "@context": "https://schema.org", "@graph": jsonLdGraph })} />
+    )}
+    {jsonLdBreadcrumb && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLdBreadcrumb)} />
     )}
     <slot name="head" />
   </head>

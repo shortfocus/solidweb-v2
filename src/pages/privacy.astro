@@ -1,9 +1,27 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { siteConfig } from "@/config/site.config";
+const site = Astro.site;
+const privacyPageLd = site
+  ? {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: "개인정보처리방침",
+      description: `${siteConfig.name} 개인정보처리방침. 개인정보 수집·이용·보호에 관한 안내.`,
+      url: String(new URL("/privacy", site)),
+      datePublished: "2025-01-01",
+      inLanguage: "ko-KR",
+      publisher: { "@id": `${site}/#organization` },
+    }
+  : null;
 ---
 
 <BaseLayout>
+  <Fragment slot="head">
+    {privacyPageLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(privacyPageLd)} />
+    )}
+  </Fragment>
   <article class="border-t border-slate-800 bg-[#0d0d0d] py-16 md:py-24">
     <div class="mx-auto max-w-3xl px-6">
       <h1 class="text-2xl font-bold text-white md:text-3xl">개인정보처리방침</h1>

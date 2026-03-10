@@ -1,8 +1,35 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ContactUs from "@/components/ContactUs.astro";
+import { siteConfig } from "@/config/site.config";
+const site = Astro.site;
+const contactPageLd = site
+  ? {
+      "@context": "https://schema.org",
+      "@type": "ContactPage",
+      name: "문의하기",
+      description: siteConfig.contact.subtitle,
+      url: String(new URL("/contact", site)),
+      mainEntity: {
+        "@type": "Organization",
+        "@id": `${site}/#organization`,
+        email: siteConfig.contact.email,
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "customer service",
+          email: siteConfig.contact.email,
+          availableLanguage: "Korean",
+        },
+      },
+    }
+  : null;
 ---
 
 <BaseLayout>
+  <Fragment slot="head">
+    {contactPageLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(contactPageLd)} />
+    )}
+  </Fragment>
   <ContactUs />
 </BaseLayout>

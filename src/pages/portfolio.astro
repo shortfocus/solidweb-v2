@@ -1,8 +1,35 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import PortfolioPage from "@/components/PortfolioPage.astro";
+import { siteConfig } from "@/config/site.config";
+const site = Astro.site;
+const projects = siteConfig.portfolioPage.projects;
+const itemList = site
+  ? {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: "솔리드웹 포트폴리오",
+      description: siteConfig.portfolioPage.description,
+      numberOfItems: projects.length,
+      itemListElement: projects.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        item: {
+          "@type": "CreativeWork",
+          name: p.title,
+          description: p.description ?? undefined,
+          url: p.link ?? (site ? String(new URL("/portfolio", site)) : undefined),
+        },
+      })),
+    }
+  : null;
 ---
 
 <BaseLayout>
+  <Fragment slot="head">
+    {itemList && (
+      <script type="application/ld+json" set:html={JSON.stringify(itemList)} />
+    )}
+  </Fragment>
   <PortfolioPage />
 </BaseLayout>

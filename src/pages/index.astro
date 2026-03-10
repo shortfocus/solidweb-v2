@@ -7,19 +7,38 @@ import OurProjects from "@/components/OurProjects.astro";
 import Review from "@/components/Review.astro";
 import FAQ from "@/components/FAQ.astro";
 import { siteConfig } from "@/config/site.config";
+const site = Astro.site;
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: siteConfig.faq.items.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+const webPageLd =
+  site
+    ? {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": `${site}/#webpage`,
+        name: siteConfig.name,
+        description: siteConfig.description,
+        url: String(site),
+        inLanguage: "ko-KR",
+        isPartOf: { "@id": `${site}/#website` },
+        about: { "@id": `${site}/#organization` },
+      }
+    : null;
 ---
 
 <BaseLayout>
   <Fragment slot="head">
-    <script type="application/ld+json" set:html={JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: siteConfig.faq.items.map((item) => ({
-        "@type": "Question",
-        name: item.q,
-        acceptedAnswer: { "@type": "Answer", text: item.a },
-      })),
-    })} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+    {webPageLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(webPageLd)} />
+    )}
   </Fragment>
   <Hero />
   <WhatWeDo />
