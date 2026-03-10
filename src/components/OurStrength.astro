@@ -1,5 +1,6 @@
 ---
 import { siteConfig } from "@/config/site.config";
+import OurStrengthCanvas from "@/components/OurStrengthCanvas";
 ---
 
 <section id="our-strength" class="border-t border-slate-800 bg-[#0d0d0d] py-20 md:py-28">
@@ -14,70 +15,15 @@ import { siteConfig } from "@/config/site.config";
     </div>
 
     <div class="mt-14 grid gap-12 lg:grid-cols-2 lg:items-stretch">
-      <div class="min-h-0 overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-900 flex flex-col">
-        <!-- 코드 에디터 + 미니 대시보드 스타일 (우측 높이에 맞춤) -->
-        <div class="flex flex-1 min-h-0 flex-col bg-[#0f172a]">
-          <!-- 타이틀 바 -->
-          <div class="flex items-center gap-2 border-b border-slate-700/80 bg-slate-800/60 px-3 py-2">
-            <span class="h-2 w-2 rounded-full bg-slate-500"></span>
-            <span class="h-2 w-2 rounded-full bg-slate-500"></span>
-            <span class="h-2 w-2 rounded-full bg-slate-500"></span>
-            <span class="ml-3 text-[10px] text-slate-500">handler.go</span>
-          </div>
-          <div class="flex flex-1 min-h-0">
-            <!-- 사이드바 (파일 아이콘) -->
-            <div class="w-10 flex-shrink-0 border-r border-slate-700/80 bg-slate-800/40 flex flex-col items-center gap-2 py-2">
-              <div class="h-6 w-6 rounded bg-slate-600/60 flex items-center justify-center">
-                <span class="text-[10px] text-slate-400">mod</span>
-              </div>
-              <div class="h-6 w-6 rounded bg-slate-500/40 border border-slate-400/50 flex items-center justify-center">
-                <span class="text-[10px] text-slate-200">.go</span>
-              </div>
-              <div class="h-6 w-6 rounded bg-slate-600/60 flex items-center justify-center">
-                <span class="text-[10px] text-slate-400">.sum</span>
-              </div>
-            </div>
-            <!-- 코드 영역 (Go) - 우측 카드 높이에 맞춤, 스크롤 없음 -->
-            <div class="flex flex-1 min-h-0 flex-col font-mono text-[10px] leading-relaxed">
-              <div class="flex min-h-0 flex-1">
-              <div class="flex-shrink-0 w-6 text-right text-slate-500 select-none pr-2 border-r border-slate-700/50 leading-relaxed">
-                1<br />2<br />3<br />4<br />5<br />6<br />7<br />8<br />9<br />10<br />11<br />12<br />13<br />14<br />15<br />16<br />17<br />18<br />19<br />20<br />21<br />22<br />23<br />24<br />25<br />26
-              </div>
-              <div class="flex-1 min-w-0 overflow-hidden p-2 pl-1">
-                <div class="font-mono text-[10px] leading-relaxed text-slate-300">
-                  <div><span class="text-slate-500">package</span> <span class="text-white">main</span></div>
-                  <div class="h-2"></div>
-                  <div><span class="text-slate-500">import</span> <span class="text-slate-400">(</span></div>
-                  <div class="pl-4"><span class="text-slate-400">"context"</span></div>
-                  <div class="pl-4"><span class="text-slate-400">"encoding/json"</span></div>
-                  <div class="pl-4"><span class="text-slate-400">"net/http"</span></div>
-                  <div class="pl-4"><span class="text-slate-400">"time"</span></div>
-                  <div><span class="text-slate-400">)</span></div>
-                  <div class="h-2"></div>
-                  <div><span class="text-slate-500">type</span> <span class="text-slate-200">Response</span> <span class="text-slate-500">struct</span> <span class="text-slate-400">{</span></div>
-                  <div class="pl-4"><span class="text-slate-200">Status</span>  <span class="text-slate-400">string</span> <span class="text-slate-500">`json:"status"`</span></div>
-                  <div class="pl-4"><span class="text-slate-200">Message</span> <span class="text-slate-400">string</span> <span class="text-slate-500">`json:"message"`</span></div>
-                  <div><span class="text-slate-400">}</span></div>
-                  <div class="h-2"></div>
-                  <div><span class="text-slate-500">func</span> <span class="text-white">handler</span><span class="text-slate-400">(w http.ResponseWriter, r *http.Request)</span> <span class="text-slate-400">{</span></div>
-                  <div class="pl-4"><span class="text-slate-200">ctx</span>, <span class="text-slate-200">cancel</span> <span class="text-slate-500">:=</span> <span class="text-slate-200">context</span>.<span class="text-slate-200">WithTimeout</span>(r.<span class="text-slate-200">Context</span>(), <span class="text-slate-200">time</span>.<span class="text-slate-200">Second</span>*<span class="text-slate-200">30</span>)</div>
-                  <div class="pl-4"><span class="text-slate-500">defer</span> <span class="text-slate-200">cancel</span>()</div>
-                  <div class="pl-4 bg-white/10 border-l-2 border-slate-400 -ml-px"><span class="text-slate-500">if</span> <span class="text-slate-200">err</span> <span class="text-slate-500">:=</span> <span class="text-white">validateRequest</span>(ctx, r); <span class="text-slate-200">err</span> <span class="text-slate-500">!=</span> <span class="text-slate-500">nil</span> <span class="text-slate-400">{</span></div>
-                  <div class="pl-8"><span class="text-white">respondError</span>(w, http.<span class="text-slate-200">StatusBadRequest</span>, err)</div>
-                  <div class="pl-8"><span class="text-slate-500">return</span></div>
-                  <div class="pl-4"><span class="text-slate-400">}</span></div>
-                  <div class="pl-4"><span class="text-slate-200">resp</span> <span class="text-slate-500">:=</span> <span class="text-slate-200">Response</span><span class="text-slate-400">{</span>Status: <span class="text-slate-400">"ok"</span>, Message: <span class="text-slate-400">"success"</span><span class="text-slate-400">}</span></div>
-                  <div class="pl-4">w.<span class="text-slate-200">Header</span>().<span class="text-slate-200">Set</span>(<span class="text-slate-400">"Content-Type"</span>, <span class="text-slate-400">"application/json"</span>)</div>
-                  <div class="pl-4"><span class="text-slate-500">if</span> <span class="text-slate-200">err</span> <span class="text-slate-500">:=</span> <span class="text-slate-200">json</span>.<span class="text-white">NewEncoder</span>(w).<span class="text-slate-200">Encode</span>(resp); err <span class="text-slate-500">!=</span> <span class="text-slate-500">nil</span> <span class="text-slate-400">{</span></div>
-                  <div class="pl-8"><span class="text-slate-200">http</span>.<span class="text-slate-200">Error</span>(w, err.<span class="text-slate-200">Error</span>(), http.<span class="text-slate-200">StatusInternalServerError</span>)</div>
-                  <div class="pl-4"><span class="text-slate-400">}</span></div>
-                  <div><span class="text-slate-400">}</span></div>
-                </div>
-              </div>
-              </div>
-            </div>
-          </div>
+      <!-- Three.js 캔버스: 토러스 노트 + 파티클 링 애니메이션 -->
+      <div class="min-h-[280px] overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-900 flex flex-col sm:min-h-[320px]">
+        <div class="flex-1 min-h-0 flex flex-col bg-[#0f172a]">
+          <OurStrengthCanvas client:load />
         </div>
+        <p class="px-4 py-3 text-center text-sm text-slate-400 bg-slate-900/80">
+          시선을 확신으로, 노출을 선점으로<br />
+          코드로 설계하는 압도적 성장의 메커니즘
+        </p>
       </div>
       <div class="space-y-4">
         {
