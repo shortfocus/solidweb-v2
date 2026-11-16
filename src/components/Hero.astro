@@ -5,27 +5,37 @@ import HeroCtaButton from "@/components/HeroCtaButton";
 ---
 
 <section class="relative overflow-hidden bg-[#0d0d0d]">
-  <div class="mx-auto max-w-6xl px-4 pt-16 pb-8 sm:px-6 sm:pt-20 sm:pb-10 md:pt-28 md:pb-14">
+  <div class="hero-dot-grid pointer-events-none absolute inset-0 z-0" aria-hidden="true"></div>
+
+  <div class="relative z-10 mx-auto max-w-6xl px-4 pt-16 pb-8 sm:px-6 sm:pt-20 sm:pb-10 md:pt-28 md:pb-14">
     <div class="mb-10 sm:mb-14 md:mb-20">
-      <h1 class="text-2xl font-bold leading-[1.25] tracking-tight text-white sm:text-4xl sm:leading-[1.2] md:text-5xl md:tracking-[-0.02em]">
+      <h1
+        data-hero-reveal=""
+        class="text-2xl font-bold leading-[1.25] tracking-tight text-white sm:text-4xl sm:leading-[1.2] md:text-5xl md:tracking-[-0.02em]"
+      >
         {siteConfig.hero.title}
       </h1>
-      <p class="mt-6 max-w-[65ch] text-[15px] font-bold leading-relaxed text-slate-400 sm:mt-8 sm:text-base sm:leading-relaxed md:max-w-none md:text-lg">
+      <p
+        data-hero-reveal=""
+        class="mt-6 max-w-[65ch] text-[15px] font-bold leading-relaxed text-slate-400 sm:mt-8 sm:text-base sm:leading-relaxed md:max-w-none md:text-lg"
+      >
         {siteConfig.hero.subtitleMain}
         <br />
         <span class="inline md:whitespace-nowrap">{siteConfig.hero.subtitleEnd}</span>
       </p>
       {siteConfig.hero.support && (
-        <p class="mt-4 text-xs text-slate-500 sm:mt-5 sm:text-sm">
+        <p data-hero-reveal="" class="mt-4 text-xs text-slate-500 sm:mt-5 sm:text-sm">
           {siteConfig.hero.support}
         </p>
       )}
-      <HeroCtaButton client:load href="/contact">
-        {siteConfig.hero.ctaText}
-      </HeroCtaButton>
+      <div data-hero-reveal="">
+        <HeroCtaButton client:load href="/contact">
+          {siteConfig.hero.ctaText}
+        </HeroCtaButton>
+      </div>
     </div>
 
-    <div class="relative w-full">
+    <div data-hero-reveal="" class="relative w-full">
       <div class="relative flex min-h-[18rem] w-full items-center justify-center rounded-xl border border-slate-200 bg-white sm:min-h-[22rem] sm:rounded-2xl md:min-h-[28rem]">
         <div class="absolute inset-0 overflow-hidden rounded-xl sm:rounded-2xl">
           <HeroCanvas client:load />
@@ -34,6 +44,18 @@ import HeroCtaButton from "@/components/HeroCtaButton";
           {siteConfig.name}
         </span>
       </div>
+    </div>
+
+    <div class="mt-8 flex justify-end sm:mt-10">
+      <a
+        href="#what-we-do"
+        data-scroll-to="#what-we-do"
+        class="inline-flex items-center gap-2 text-xs font-medium tracking-widest text-slate-500 transition hover:text-slate-300"
+        aria-label="다음 섹션으로 스크롤"
+      >
+        <span>SCROLL</span>
+        <span class="hero-scroll-dot" aria-hidden="true"></span>
+      </a>
     </div>
   </div>
 </section>

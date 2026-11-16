@@ -1,272 +1,186 @@
 import * as React from "react";
 import * as THREE from "three";
 
-// 조화로운 다색 팔레트 (로즈·시안·바이올렛·앰버·에메랄드)
-const ACCENT = 0xf43f5e; // rose (브랜드 포인트)
-const PARTICLE_COUNT = 800;
-const ORBIT_SPEED = 0.14;
-const PULSE_SPEED = 0.85;
-const GROWTH_CYCLE_DURATION = 7;
-const WAVE_CYCLE_DURATION = 5.2;
-const CONVERGE_COUNT = 80;
-const RING_INSTANCE_COUNT = 56;
-const TUNNEL_PALETTE = [
-  0xf43f5e, 0x22d3ee, 0xa78bfa, 0xfbbf24, 0x34d399,
-  0x38bdf8, 0xc084fc, 0xf59e0b, 0x2dd4bf,
-  0x6366f1, 0xfb923c,
-]; // 로즈, 시안, 바이올렛, 앰버, 에메랄드, 스카이, 퍼플, 앰버다크, 틸, 인디고, 오렌지
-const dummy = new THREE.Object3D();
-const color = new THREE.Color();
+/** HeroCanvas와 동일 톤: 흰 배경 · 반투명 슬레이트 블록 · 마우스 회전 · 조립 루프 */
+const ROTATION_MAX = 0.55;
+const LERP = 0.14;
+const INIT_ROTATION_X = -0.38;
+const INIT_ROTATION_Y = 0.42;
+
+const BLOCK_SIZE = 0.12;
+const SPACING = BLOCK_SIZE * 1.08;
+
+/** 중공 프레임 — 정육면체 모서리만 (히어로 솔리드 큐브와 대비) */
+const GRID = 6;
+const HALF = (GRID - 1) * 0.5;
+
+function buildBlockPositions(): [number, number, number][] {
+  const positions: [number, number, number][] = [];
+  for (let ix = 0; ix < GRID; ix++) {
+    for (let iy = 0; iy < GRID; iy++) {
+      for (let iz = 0; iz < GRID; iz++) {
+        const onX = ix === 0 || ix === GRID - 1;
+        const onY = iy === 0 || iy === GRID - 1;
+        const onZ = iz === 0 || iz === GRID - 1;
+        // 모서리: 두 면 이상이 경계에 걸침
+        if (Number(onX) + Number(onY) + Number(onZ) < 2) continue;
+        positions.push([
+          (ix - HALF) * SPACING,
+          (iy - HALF) * SPACING,
+          (iz - HALF) * SPACING,
+        ]);
+      }
+    }
+  }
+  return positions;
+}
+
+const BLOCK_POSITIONS = buildBlockPositions();
+
+const ASSEMBLE_DELAY = 1;
+const POSITION_LERP = 0.1;
+const SCALE_LERP = 0.15;
+const HOLD_FRAMES = 90;
 
 export default function OurStrengthCanvas() {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const frameRef = React.useRef<number>(0);
+  const targetRotationRef = React.useRef({ x: INIT_ROTATION_X, y: INIT_ROTATION_Y });
+  const currentRotationRef = React.useRef({ x: INIT_ROTATION_X, y: INIT_ROTATION_Y });
 
   React.useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const width = container.clientWidth;
-    const height = container.clientHeight;
+    const height = container.clientHeight || 280;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(52, width / height, 0.1, 100);
-    camera.position.set(0, 0, 1.8);
-    camera.lookAt(0, 0, -3);
+    const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
+    camera.position.z = 2.2;
+    camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x0f172a, 1);
+    renderer.setClearColor(0xffffff, 1);
     container.appendChild(renderer.domElement);
 
-    // ---- 인스턴스 링 터널 (Instanced vertex-colors 스타일) ----
-    const ringGeo = new THREE.TorusGeometry(0.42, 0.028, 16, 64);
-    const ringMat = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
-      emissive: 0x334155,
-      emissiveIntensity: 0.5,
-      metalness: 0.85,
-      roughness: 0.2,
+    const blockGeometry = new THREE.BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+    const blockMaterial = new THREE.MeshLambertMaterial({
+      color: 0x94a3b8,
       transparent: true,
-      opacity: 0.92,
+      opacity: 0.35,
+      flatShading: true,
       side: THREE.DoubleSide,
-      vertexColors: true,
     });
-    const instancedRings = new THREE.InstancedMesh(ringGeo, ringMat, RING_INSTANCE_COUNT);
-    instancedRings.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    const instanceColors = new Float32Array(RING_INSTANCE_COUNT * 3);
-    for (let i = 0; i < RING_INSTANCE_COUNT; i++) {
-      const c = TUNNEL_PALETTE[i % TUNNEL_PALETTE.length];
-      color.setHex(c);
-      instanceColors[i * 3] = color.r;
-      instanceColors[i * 3 + 1] = color.g;
-      instanceColors[i * 3 + 2] = color.b;
+
+    const blocksGroup = new THREE.Group();
+
+    type BlockState = {
+      mesh: THREE.Mesh;
+      targetPos: THREE.Vector3;
+      startPos: THREE.Vector3;
+      currentPos: THREE.Vector3;
+      currentScale: number;
+      active: boolean;
+    };
+
+    const blocks: BlockState[] = BLOCK_POSITIONS.map(([tx, ty, tz], i) => {
+      const mesh = new THREE.Mesh(blockGeometry, blockMaterial);
+      const targetPos = new THREE.Vector3(tx, ty, tz);
+      const angle = (i / BLOCK_POSITIONS.length) * Math.PI * 2;
+      const radius = 1.1 + (i % 3) * 0.18;
+      const startX = Math.cos(angle) * radius * 0.55;
+      const startZ = Math.sin(angle) * radius * 0.55;
+      const startY = -0.55 - (i % 5) * 0.12;
+      const startPos = new THREE.Vector3(startX, startY, startZ);
+      mesh.position.copy(startPos);
+      mesh.scale.setScalar(0.001);
+      blocksGroup.add(mesh);
+      return {
+        mesh,
+        targetPos,
+        startPos,
+        currentPos: startPos.clone(),
+        currentScale: 0.001,
+        active: false,
+      };
+    });
+
+    function resetBlocks() {
+      blocks.forEach((block) => {
+        block.currentPos.copy(block.startPos);
+        block.mesh.position.copy(block.startPos);
+        block.currentScale = 0.001;
+        block.mesh.scale.setScalar(0.001);
+        block.active = false;
+      });
     }
-    instancedRings.instanceColor = new THREE.InstancedBufferAttribute(instanceColors, 3);
-    instancedRings.instanceColor.setUsage(THREE.DynamicDrawUsage);
-    for (let i = 0; i < RING_INSTANCE_COUNT; i++) {
-      const z = -0.3 - (i / RING_INSTANCE_COUNT) * 5.2;
-      const scale = 0.45 + (1 - (i / RING_INSTANCE_COUNT)) * 0.85;
-      dummy.position.set(0, 0, z);
-      dummy.scale.setScalar(scale);
-      dummy.rotation.x = Math.PI * 0.5;
-      dummy.updateMatrix();
-      instancedRings.setMatrixAt(i, dummy.matrix);
-    }
-    instancedRings.instanceMatrix.needsUpdate = true;
-    scene.add(instancedRings);
 
-    // ---- 성장 링: 반지름이 주기적으로 확장·리셋 (노출 → 선점, 성장 메커니즘) ----
-    const ring1Angles = new Float32Array(PARTICLE_COUNT * 2); // [angle, yOffset] per particle
-    const ring1BaseRadius = 1.35;
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      ring1Angles[i * 2] = (i / PARTICLE_COUNT) * Math.PI * 2;
-      ring1Angles[i * 2 + 1] = (Math.random() - 0.5) * 0.35;
-    }
-    const ring1Positions = new Float32Array(PARTICLE_COUNT * 3);
-    const ring1Geo = new THREE.BufferGeometry();
-    ring1Geo.setAttribute("position", new THREE.BufferAttribute(ring1Positions, 3));
-    const ring1Mat = new THREE.PointsMaterial({
-      color: 0x22d3ee,
-      size: 0.042,
-      transparent: true,
-      opacity: 0.75,
-      sizeAttenuation: true,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    });
-    const ring1 = new THREE.Points(ring1Geo, ring1Mat);
-    scene.add(ring1);
+    scene.add(blocksGroup);
 
-    // ---- 기어 링: 기울어진 궤도 (메커니즘, 설계) ----
-    const ring2Positions = new Float32Array(PARTICLE_COUNT * 3);
-    const ring2Radius = 1.2;
-    const tilt = Math.PI * 0.38;
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const t = (i / PARTICLE_COUNT) * Math.PI * 2;
-      const x = Math.cos(t) * ring2Radius;
-      const y = Math.sin(t) * ring2Radius;
-      ring2Positions[i * 3] = x * Math.cos(tilt);
-      ring2Positions[i * 3 + 1] = y;
-      ring2Positions[i * 3 + 2] = x * Math.sin(tilt);
-    }
-    const ring2Geo = new THREE.BufferGeometry();
-    ring2Geo.setAttribute("position", new THREE.BufferAttribute(ring2Positions, 3));
-    const ring2Mat = new THREE.PointsMaterial({
-      color: 0xa78bfa,
-      size: 0.032,
-      transparent: true,
-      opacity: 0.55,
-      sizeAttenuation: true,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    });
-    const ring2 = new THREE.Points(ring2Geo, ring2Mat);
-    scene.add(ring2);
+    const light = new THREE.DirectionalLight(0xffffff, 0.85);
+    light.position.set(0.5, 0.5, 1);
+    scene.add(light);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+    scene.add(ambient);
 
-    // ---- 펄스 웨이브: 중심에서 퍼져 나가는 성장 웨이브 (압도적 성장) ----
-    const waveGeo = new THREE.SphereGeometry(0.5, 32, 32);
-    const waveMat = new THREE.MeshBasicMaterial({
-      color: 0x38bdf8,
-      transparent: true,
-      opacity: 0.3,
-      side: THREE.BackSide,
-      depthWrite: false,
-    });
-    const wave = new THREE.Mesh(waveGeo, waveMat);
-    scene.add(wave);
+    const onMouseMove = (e: MouseEvent) => {
+      const rect = container.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      targetRotationRef.current.y = INIT_ROTATION_Y + (x - 0.5) * 2 * ROTATION_MAX;
+      targetRotationRef.current.x = INIT_ROTATION_X + (0.5 - y) * 2 * ROTATION_MAX;
+    };
 
-    // ---- 시선 수렴 파티클: 바깥 → 중심 (시선을 확신으로) ----
-    const convergePositions = new Float32Array(CONVERGE_COUNT * 3);
-    const convergeTargets = new Float32Array(CONVERGE_COUNT * 3);
-    const convergeSpeeds = new Float32Array(CONVERGE_COUNT);
-    for (let i = 0; i < CONVERGE_COUNT; i++) {
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      const r = 1.4 + Math.random() * 0.8;
-      convergePositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      convergePositions[i * 3 + 1] = r * Math.cos(phi);
-      convergePositions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
-      convergeTargets[i * 3] = (Math.random() - 0.5) * 0.15;
-      convergeTargets[i * 3 + 1] = (Math.random() - 0.5) * 0.15;
-      convergeTargets[i * 3 + 2] = (Math.random() - 0.5) * 0.15;
-      convergeSpeeds[i] = 0.003 + Math.random() * 0.005;
-    }
-    const convergeGeo = new THREE.BufferGeometry();
-    convergeGeo.setAttribute("position", new THREE.BufferAttribute(convergePositions, 3));
-    const convergeMat = new THREE.PointsMaterial({
-      color: 0xc4b5fd,
-      size: 0.028,
-      transparent: true,
-      opacity: 0.8,
-      sizeAttenuation: true,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    });
-    const convergePoints = new THREE.Points(convergeGeo, convergeMat);
-    scene.add(convergePoints);
+    const onMouseLeave = () => {
+      targetRotationRef.current.x = INIT_ROTATION_X;
+      targetRotationRef.current.y = INIT_ROTATION_Y;
+    };
 
-    // ---- 중앙 코어 (확신의 중심) ----
-    const coreGeo = new THREE.SphereGeometry(0.1, 24, 24);
-    const coreMat = new THREE.MeshBasicMaterial({
-      color: 0xfbbf24,
-      transparent: true,
-      opacity: 0.75,
-    });
-    const core = new THREE.Mesh(coreGeo, coreMat);
-    scene.add(core);
+    container.addEventListener("mousemove", onMouseMove);
+    container.addEventListener("mouseleave", onMouseLeave);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
-    dirLight.position.set(2, 2, 2);
-    scene.add(dirLight);
-    const ambLight = new THREE.AmbientLight(0x64748b, 0.5);
-    scene.add(ambLight);
-
-    let time = 0;
-    let wavePhase = 0;
+    let frameCount = 0;
+    let holdCount = 0;
+    const totalAssembleFrames = BLOCK_POSITIONS.length * ASSEMBLE_DELAY + 60;
 
     function animate() {
       frameRef.current = requestAnimationFrame(animate);
-      const dt = 0.016;
-      time += dt;
+      frameCount += 1;
 
-      // 인스턴스 링 터널: 링마다 회전 (퍼널 포탈 느낌)
-      for (let i = 0; i < RING_INSTANCE_COUNT; i++) {
-        const z = -0.3 - (i / RING_INSTANCE_COUNT) * 5.2;
-        const scale = 0.45 + (1 - i / RING_INSTANCE_COUNT) * 0.85;
-        const rotY = time * (0.16 + (i % 3) * 0.06);
-        const rotZ = time * 0.08 * (i % 2 === 0 ? 1 : -1);
-        dummy.position.set(0, 0, z);
-        dummy.scale.setScalar(scale);
-        dummy.rotation.order = "YXZ";
-        dummy.rotation.x = Math.PI * 0.5;
-        dummy.rotation.y = rotY;
-        dummy.rotation.z = rotZ;
-        dummy.updateMatrix();
-        instancedRings.setMatrixAt(i, dummy.matrix);
-      }
-      instancedRings.instanceMatrix.needsUpdate = true;
-      const pulse = 0.55 + Math.sin(time * PULSE_SPEED) * 0.2;
-      (ringMat as THREE.MeshPhysicalMaterial).emissiveIntensity = pulse;
+      const target = targetRotationRef.current;
+      const current = currentRotationRef.current;
+      current.x += (target.x - current.x) * LERP;
+      current.y += (target.y - current.y) * LERP;
 
-      // 성장 링: 반지름이 1 → 1.45 → 1 사이클 (노출을 선점으로)
-      const growthT = (time % GROWTH_CYCLE_DURATION) / GROWTH_CYCLE_DURATION;
-      const growthScale = 1 + 0.45 * Math.sin(growthT * Math.PI * 2);
-      const posAttr = ring1Geo.attributes.position as THREE.BufferAttribute;
-      for (let i = 0; i < PARTICLE_COUNT; i++) {
-        const a = ring1Angles[i * 2];
-        const yOff = ring1Angles[i * 2 + 1];
-        const r = ring1BaseRadius * growthScale;
-        posAttr.array[i * 3] = Math.cos(a) * r;
-        posAttr.array[i * 3 + 1] = yOff;
-        posAttr.array[i * 3 + 2] = Math.sin(a) * r;
-      }
-      posAttr.needsUpdate = true;
-      ring1.rotation.y = time * ORBIT_SPEED;
+      blocksGroup.rotation.x = current.x;
+      blocksGroup.rotation.y = current.y;
 
-      ring2.rotation.y = -time * ORBIT_SPEED * 1.15;
-      ring2.rotation.z = time * 0.024;
+      if (holdCount > 0) {
+        holdCount -= 1;
+        if (holdCount === 0) {
+          resetBlocks();
+          frameCount = 0;
+        }
+      } else {
+        const nextBlockIndex = Math.floor(frameCount / ASSEMBLE_DELAY);
+        blocks.forEach((block, i) => {
+          if (i <= nextBlockIndex) block.active = true;
 
-      // 펄스 웨이브: 주기적으로 커졌다가 페이드아웃 (압도적 성장)
-      wavePhase += dt;
-      if (wavePhase > WAVE_CYCLE_DURATION) wavePhase -= WAVE_CYCLE_DURATION;
-      const waveT = wavePhase / WAVE_CYCLE_DURATION;
-      const waveScale = 0.3 + waveT * 4.2;
-      const waveOpacity = Math.max(0, 0.4 * (1 - waveT) * (1 - waveT));
-      wave.scale.setScalar(waveScale);
-      waveMat.opacity = waveOpacity;
+          if (block.active) {
+            block.currentPos.lerp(block.targetPos, POSITION_LERP);
+            block.mesh.position.copy(block.currentPos);
+            block.currentScale += (1 - block.currentScale) * SCALE_LERP;
+            block.mesh.scale.setScalar(block.currentScale);
+          }
+        });
 
-      // 시선 수렴: 바깥 → 중심으로 이동 후 리셋
-      const convergePos = convergeGeo.attributes.position as THREE.BufferAttribute;
-      const arr = convergePos.array as Float32Array;
-      for (let i = 0; i < CONVERGE_COUNT; i++) {
-        let x = arr[i * 3];
-        let y = arr[i * 3 + 1];
-        let z = arr[i * 3 + 2];
-        const tx = convergeTargets[i * 3];
-        const ty = convergeTargets[i * 3 + 1];
-        const tz = convergeTargets[i * 3 + 2];
-        const spd = convergeSpeeds[i];
-        x += (tx - x) * spd;
-        y += (ty - y) * spd;
-        z += (tz - z) * spd;
-        arr[i * 3] = x;
-        arr[i * 3 + 1] = y;
-        arr[i * 3 + 2] = z;
-        const dist = Math.sqrt((tx - x) ** 2 + (ty - y) ** 2 + (tz - z) ** 2);
-        if (dist < 0.08) {
-          const theta = Math.random() * Math.PI * 2;
-          const phi = Math.acos(2 * Math.random() - 1);
-          const r = 1.5 + Math.random() * 0.6;
-          arr[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-          arr[i * 3 + 1] = r * Math.cos(phi);
-          arr[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+        if (frameCount >= totalAssembleFrames && holdCount === 0) {
+          holdCount = HOLD_FRAMES;
         }
       }
-      convergePos.needsUpdate = true;
-
-      core.scale.setScalar(1 + Math.sin(time * 1.1) * 0.12);
 
       renderer.render(scene, camera);
     }
@@ -275,7 +189,7 @@ export default function OurStrengthCanvas() {
     const onResize = () => {
       if (!container) return;
       const w = container.clientWidth;
-      const h = container.clientHeight;
+      const h = container.clientHeight || 280;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
@@ -283,20 +197,12 @@ export default function OurStrengthCanvas() {
     window.addEventListener("resize", onResize);
 
     return () => {
+      container.removeEventListener("mousemove", onMouseMove);
+      container.removeEventListener("mouseleave", onMouseLeave);
       window.removeEventListener("resize", onResize);
       cancelAnimationFrame(frameRef.current);
-      ringGeo.dispose();
-      ringMat.dispose();
-      ring1Geo.dispose();
-      ring1Mat.dispose();
-      ring2Geo.dispose();
-      ring2Mat.dispose();
-      waveGeo.dispose();
-      waveMat.dispose();
-      convergeGeo.dispose();
-      convergeMat.dispose();
-      coreGeo.dispose();
-      coreMat.dispose();
+      blockGeometry.dispose();
+      blockMaterial.dispose();
       if (container && renderer.domElement.parentNode === container) {
         container.removeChild(renderer.domElement);
       }
@@ -307,7 +213,7 @@ export default function OurStrengthCanvas() {
   return (
     <div
       ref={containerRef}
-      className="h-full w-full min-h-[280px] rounded-b-2xl overflow-hidden"
+      className="h-full w-full min-h-[320px] cursor-default overflow-hidden sm:min-h-[380px]"
       aria-hidden="true"
     />
   );

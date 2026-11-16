@@ -5,7 +5,7 @@ import OurStrengthCanvas from "@/components/OurStrengthCanvas";
 
 <section id="our-strength" class="border-t border-slate-800 bg-[#0d0d0d] py-20 md:py-28">
   <div class="mx-auto max-w-6xl px-6">
-    <div class="rounded-2xl border border-slate-800 border-l-4 border-l-[#f43f5e] bg-slate-900/20 px-6 py-5">
+    <div data-reveal="" class="rounded-2xl border border-slate-800 border-l-4 border-l-[#f43f5e] bg-slate-900/20 px-6 py-5">
       <h2 class="text-2xl font-bold text-white md:text-3xl">
         <span class="text-[#f43f5e]">02</span> Our Strength
       </h2>
@@ -15,17 +15,11 @@ import OurStrengthCanvas from "@/components/OurStrengthCanvas";
     </div>
 
     <div class="mt-14 grid gap-12 lg:grid-cols-2 lg:items-stretch">
-      <!-- Three.js 캔버스: 토러스 노트 + 파티클 링 애니메이션 -->
-      <div class="min-h-[280px] overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-900 flex flex-col sm:min-h-[320px]">
-        <div class="flex-1 min-h-0 flex flex-col bg-[#0f172a]">
-          <OurStrengthCanvas client:load />
-        </div>
-        <p class="px-4 py-3 text-center text-sm text-slate-400 bg-slate-900/80">
-          시선을 확신으로, 노출을 선점으로<br />
-          코드로 설계하는 압도적 성장의 메커니즘
-        </p>
+      <!-- Three.js 캔버스: Hero와 동일 톤 (흰 배경 · 슬레이트 블록) -->
+      <div data-reveal="" class="min-h-[320px] overflow-hidden rounded-2xl border border-slate-200 bg-white sm:min-h-[380px] lg:h-full lg:min-h-0">
+        <OurStrengthCanvas client:load />
       </div>
-      <div class="space-y-4">
+      <div data-reveal-stagger="" class="space-y-4">
         {
           siteConfig.ourStrength.items.map((item) => (
             <div class="rounded-xl border border-slate-800 border-l-4 border-l-[#f43f5e] bg-slate-900/30 px-5 py-4">
