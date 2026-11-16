@@ -1,183 +1,239 @@
 import * as React from "react";
 import * as THREE from "three";
 
-const ROTATION_MAX = 0.6;
-const LERP = 0.14;
-const INIT_ROTATION_X = -0.42;
-const INIT_ROTATION_Y = 0.48;
+/**
+ * [활성] three.js drawrange 네트워크
+ * 보관: HeroCanvasNetwork.tsx (동일) · HeroCanvasWaves.tsx (2번 waves)
+ */
+const MAX_PARTICLES = 140;
+const PARTICLE_COUNT = 90;
+const BOX = 2.4;
+const BOX_HALF = BOX / 2;
+const MIN_DISTANCE = 0.55;
+const MAX_CONNECTIONS = 4;
+const ROTATION_MAX = 0.35;
+const LERP = 0.08;
+const INIT_ROTATION_X = -0.12;
+const INIT_ROTATION_Y = 0.18;
 
-// 블록 한 개 크기 (정육면체)
-const BLOCK_SIZE = 0.12;
-
-// 조립될 형태: 정육면체 그리드 (6x6x6)
-const GRID_SIZE = 6;
-const HALF = (GRID_SIZE - 1) * 0.5;
-
-/** 3D 그리드에서 정육면체 형태의 블록 위치 생성 (중심 0,0,0) */
-function buildBlockPositions(): [number, number, number][] {
-  const positions: [number, number, number][] = [];
-  const spacing = BLOCK_SIZE * 1.08;
-
-  for (let ix = 0; ix < GRID_SIZE; ix++) {
-    for (let iy = 0; iy < GRID_SIZE; iy++) {
-      for (let iz = 0; iz < GRID_SIZE; iz++) {
-        const x = (ix - HALF) * spacing;
-        const y = (iy - HALF) * spacing;
-        const z = (iz - HALF) * spacing;
-        positions.push([x, y, z]);
-      }
-    }
-  }
-  return positions;
-}
-
-const BLOCK_POSITIONS = buildBlockPositions();
-
-const ASSEMBLE_DELAY = 1; // 프레임 간격으로 블록 하나씩 조립
-const POSITION_LERP = 0.1; // 목표 위치로 이동 속도
-const SCALE_LERP = 0.15; // 크기 커지는 속도
-const HOLD_FRAMES = 90; // 조립 완료 후 유지할 프레임 수 (~1.5초)
+const SLATE = new THREE.Color(0x94a3b8);
+const ROSE = new THREE.Color(0xf43f5e);
 
 export default function HeroCanvas() {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const frameRef = React.useRef<number>(0);
-  const targetRotationRef = React.useRef({ x: INIT_ROTATION_X, y: INIT_ROTATION_Y });
-  const currentRotationRef = React.useRef({ x: INIT_ROTATION_X, y: INIT_ROTATION_Y });
+  const targetRot = React.useRef({ x: INIT_ROTATION_X, y: INIT_ROTATION_Y });
+  const currentRot = React.useRef({ x: INIT_ROTATION_X, y: INIT_ROTATION_Y });
 
   React.useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     const width = container.clientWidth;
-    const height = container.clientHeight;
+    const height = container.clientHeight || 400;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
-    camera.position.z = 2.2;
-    camera.lookAt(0, 0, 0);
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 40);
+    camera.position.set(0.2, 0.15, 4.2);
+    camera.lookAt(0.35, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0xffffff, 1);
+    renderer.setClearColor(0x0d0d0d, 1);
     container.appendChild(renderer.domElement);
 
-    const blockGeometry = new THREE.BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-    const blockMaterial = new THREE.MeshLambertMaterial({
-      color: 0x94a3b8,
-      transparent: true,
-      opacity: 0.35,
-      flatShading: true,
-      side: THREE.DoubleSide,
-    });
+    const group = new THREE.Group();
+    group.position.set(0.55, 0, 0);
+    scene.add(group);
 
-    const blocksGroup = new THREE.Group();
+    // 희미한 바운딩 박스 (설계 프레임)
+    const helper = new THREE.BoxHelper(
+      new THREE.Mesh(new THREE.BoxGeometry(BOX, BOX, BOX))
+    );
+    (helper.material as THREE.LineBasicMaterial).color.setHex(0x334155);
+    (helper.material as THREE.LineBasicMaterial).transparent = true;
+    (helper.material as THREE.LineBasicMaterial).opacity = 0.35;
+    group.add(helper);
 
-    type BlockState = {
-      mesh: THREE.Mesh;
-      targetPos: THREE.Vector3;
-      startPos: THREE.Vector3;
-      currentPos: THREE.Vector3;
-      currentScale: number;
-      active: boolean;
+    type ParticleData = {
+      velocity: THREE.Vector3;
+      numConnections: number;
     };
 
-    const blocks: BlockState[] = BLOCK_POSITIONS.map(([tx, ty, tz], i) => {
-      const mesh = new THREE.Mesh(blockGeometry, blockMaterial);
-      const targetPos = new THREE.Vector3(tx, ty, tz);
-      const angle = (i / BLOCK_POSITIONS.length) * Math.PI * 2;
-      const radius = 1.2 + (i % 3) * 0.2;
-      const startX = Math.cos(angle) * radius * 0.6;
-      const startZ = Math.sin(angle) * radius * 0.6;
-      const startY = -0.4 - (i % 5) * 0.15;
-      const startPos = new THREE.Vector3(startX, startY, startZ);
-      mesh.position.set(startX, startY, startZ);
-      mesh.scale.setScalar(0.001);
-      blocksGroup.add(mesh);
-      return {
-        mesh,
-        targetPos,
-        startPos,
-        currentPos: startPos.clone(),
-        currentScale: 0.001,
-        active: false,
-      };
-    });
+    const particlesData: ParticleData[] = [];
+    const particlePositions = new Float32Array(MAX_PARTICLES * 3);
 
-    function resetBlocks() {
-      blocks.forEach((block) => {
-        block.currentPos.copy(block.startPos);
-        block.mesh.position.copy(block.startPos);
-        block.currentScale = 0.001;
-        block.mesh.scale.setScalar(0.001);
-        block.active = false;
+    for (let i = 0; i < MAX_PARTICLES; i++) {
+      particlePositions[i * 3] = Math.random() * BOX - BOX_HALF;
+      particlePositions[i * 3 + 1] = Math.random() * BOX - BOX_HALF;
+      particlePositions[i * 3 + 2] = Math.random() * BOX - BOX_HALF;
+      particlesData.push({
+        velocity: new THREE.Vector3(
+          (-0.5 + Math.random()) * 0.006,
+          (-0.5 + Math.random()) * 0.006,
+          (-0.5 + Math.random()) * 0.006
+        ),
+        numConnections: 0,
       });
     }
 
-    scene.add(blocksGroup);
+    const particlesGeo = new THREE.BufferGeometry();
+    particlesGeo.setDrawRange(0, PARTICLE_COUNT);
+    particlesGeo.setAttribute(
+      "position",
+      new THREE.BufferAttribute(particlePositions, 3).setUsage(THREE.DynamicDrawUsage)
+    );
 
-    const light = new THREE.DirectionalLight(0xffffff, 0.85);
-    light.position.set(0.5, 0.5, 1);
-    scene.add(light);
-    const ambient = new THREE.AmbientLight(0xffffff, 0.4);
-    scene.add(ambient);
+    const pointsMat = new THREE.PointsMaterial({
+      color: 0xcbd5e1,
+      size: 0.045,
+      transparent: true,
+      opacity: 0.85,
+      sizeAttenuation: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    const pointCloud = new THREE.Points(particlesGeo, pointsMat);
+    group.add(pointCloud);
 
-    const onMouseMove = (e: MouseEvent) => {
+    const maxSegments = MAX_PARTICLES * MAX_CONNECTIONS;
+    const linePositions = new Float32Array(maxSegments * 2 * 3);
+    const lineColors = new Float32Array(maxSegments * 2 * 3);
+
+    const linesGeo = new THREE.BufferGeometry();
+    linesGeo.setAttribute(
+      "position",
+      new THREE.BufferAttribute(linePositions, 3).setUsage(THREE.DynamicDrawUsage)
+    );
+    linesGeo.setAttribute(
+      "color",
+      new THREE.BufferAttribute(lineColors, 3).setUsage(THREE.DynamicDrawUsage)
+    );
+    linesGeo.setDrawRange(0, 0);
+    linesGeo.computeBoundingSphere();
+
+    const linesMat = new THREE.LineBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.9,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    });
+    const linesMesh = new THREE.LineSegments(linesGeo, linesMat);
+    group.add(linesMesh);
+
+    const onPointerMove = (e: PointerEvent) => {
       const rect = container.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width;
       const y = (e.clientY - rect.top) / rect.height;
-      targetRotationRef.current.y = INIT_ROTATION_Y + (x - 0.5) * 2 * ROTATION_MAX;
-      targetRotationRef.current.x = INIT_ROTATION_X + (0.5 - y) * 2 * ROTATION_MAX;
+      targetRot.current.y = INIT_ROTATION_Y + (x - 0.5) * 2 * ROTATION_MAX;
+      targetRot.current.x = INIT_ROTATION_X + (0.5 - y) * 2 * ROTATION_MAX;
     };
-
-    const onMouseLeave = () => {
-      targetRotationRef.current.x = INIT_ROTATION_X;
-      targetRotationRef.current.y = INIT_ROTATION_Y;
+    const onPointerLeave = () => {
+      targetRot.current.x = INIT_ROTATION_X;
+      targetRot.current.y = INIT_ROTATION_Y;
     };
+    container.addEventListener("pointermove", onPointerMove);
+    container.addEventListener("pointerleave", onPointerLeave);
 
-    container.addEventListener("mousemove", onMouseMove);
-    container.addEventListener("mouseleave", onMouseLeave);
-
-    let frameCount = 0;
-    let holdCount = 0;
-    const totalAssembleFrames = BLOCK_POSITIONS.length * ASSEMBLE_DELAY + 60;
+    let time = 0;
 
     function animate() {
       frameRef.current = requestAnimationFrame(animate);
-      frameCount += 1;
+      time += 0.016;
 
-      const target = targetRotationRef.current;
-      const current = currentRotationRef.current;
-      current.x += (target.x - current.x) * LERP;
-      current.y += (target.y - current.y) * LERP;
+      const tr = targetRot.current;
+      const cr = currentRot.current;
+      cr.x += (tr.x - cr.x) * LERP;
+      cr.y += (tr.y - cr.y) * LERP;
+      group.rotation.x = cr.x;
+      group.rotation.y = cr.y + (reduced ? 0 : time * 0.05);
 
-      blocksGroup.rotation.x = current.x;
-      blocksGroup.rotation.y = current.y;
+      let vertexpos = 0;
+      let colorpos = 0;
+      let numConnected = 0;
 
-      if (holdCount > 0) {
-        holdCount -= 1;
-        if (holdCount === 0) {
-          resetBlocks();
-          frameCount = 0;
-        }
-      } else {
-        const nextBlockIndex = Math.floor(frameCount / ASSEMBLE_DELAY);
-        blocks.forEach((block, i) => {
-          if (i < nextBlockIndex) block.active = true;
-          else if (i === nextBlockIndex) block.active = true;
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particlesData[i].numConnections = 0;
+      }
 
-          if (block.active) {
-            block.currentPos.lerp(block.targetPos, POSITION_LERP);
-            block.mesh.position.copy(block.currentPos);
-            block.currentScale += (1 - block.currentScale) * SCALE_LERP;
-            block.mesh.scale.setScalar(block.currentScale);
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const data = particlesData[i];
+
+        if (!reduced) {
+          particlePositions[i * 3] += data.velocity.x;
+          particlePositions[i * 3 + 1] += data.velocity.y;
+          particlePositions[i * 3 + 2] += data.velocity.z;
+
+          if (
+            particlePositions[i * 3 + 1] < -BOX_HALF ||
+            particlePositions[i * 3 + 1] > BOX_HALF
+          ) {
+            data.velocity.y = -data.velocity.y;
           }
-        });
+          if (
+            particlePositions[i * 3] < -BOX_HALF ||
+            particlePositions[i * 3] > BOX_HALF
+          ) {
+            data.velocity.x = -data.velocity.x;
+          }
+          if (
+            particlePositions[i * 3 + 2] < -BOX_HALF ||
+            particlePositions[i * 3 + 2] > BOX_HALF
+          ) {
+            data.velocity.z = -data.velocity.z;
+          }
+        }
 
-        if (frameCount >= totalAssembleFrames && holdCount === 0) {
-          holdCount = HOLD_FRAMES;
+        if (data.numConnections >= MAX_CONNECTIONS) continue;
+
+        for (let j = i + 1; j < PARTICLE_COUNT; j++) {
+          const dataB = particlesData[j];
+          if (dataB.numConnections >= MAX_CONNECTIONS) continue;
+
+          const dx = particlePositions[i * 3] - particlePositions[j * 3];
+          const dy = particlePositions[i * 3 + 1] - particlePositions[j * 3 + 1];
+          const dz = particlePositions[i * 3 + 2] - particlePositions[j * 3 + 2];
+          const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+          if (dist < MIN_DISTANCE) {
+            data.numConnections++;
+            dataB.numConnections++;
+
+            const alpha = 1 - dist / MIN_DISTANCE;
+
+            linePositions[vertexpos++] = particlePositions[i * 3];
+            linePositions[vertexpos++] = particlePositions[i * 3 + 1];
+            linePositions[vertexpos++] = particlePositions[i * 3 + 2];
+            linePositions[vertexpos++] = particlePositions[j * 3];
+            linePositions[vertexpos++] = particlePositions[j * 3 + 1];
+            linePositions[vertexpos++] = particlePositions[j * 3 + 2];
+
+            // 가까울수록 로즈, 멀수록 슬레이트
+            const t = alpha * 0.85;
+            const r = (SLATE.r + (ROSE.r - SLATE.r) * t) * alpha;
+            const g = (SLATE.g + (ROSE.g - SLATE.g) * t) * alpha;
+            const b = (SLATE.b + (ROSE.b - SLATE.b) * t) * alpha;
+            for (let k = 0; k < 2; k++) {
+              lineColors[colorpos++] = r;
+              lineColors[colorpos++] = g;
+              lineColors[colorpos++] = b;
+            }
+
+            numConnected++;
+          }
         }
       }
+
+      linesGeo.setDrawRange(0, numConnected * 2);
+      linesGeo.attributes.position.needsUpdate = true;
+      linesGeo.attributes.color.needsUpdate = true;
+      particlesGeo.attributes.position.needsUpdate = true;
 
       renderer.render(scene, camera);
     }
@@ -186,7 +242,7 @@ export default function HeroCanvas() {
     const onResize = () => {
       if (!container) return;
       const w = container.clientWidth;
-      const h = container.clientHeight;
+      const h = container.clientHeight || 400;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
@@ -194,12 +250,16 @@ export default function HeroCanvas() {
     window.addEventListener("resize", onResize);
 
     return () => {
-      container.removeEventListener("mousemove", onMouseMove);
-      container.removeEventListener("mouseleave", onMouseLeave);
       window.removeEventListener("resize", onResize);
+      container.removeEventListener("pointermove", onPointerMove);
+      container.removeEventListener("pointerleave", onPointerLeave);
       cancelAnimationFrame(frameRef.current);
-      blockGeometry.dispose();
-      blockMaterial.dispose();
+      particlesGeo.dispose();
+      pointsMat.dispose();
+      linesGeo.dispose();
+      linesMat.dispose();
+      helper.geometry?.dispose();
+      (helper.material as THREE.Material).dispose();
       if (container && renderer.domElement.parentNode === container) {
         container.removeChild(renderer.domElement);
       }
@@ -210,7 +270,7 @@ export default function HeroCanvas() {
   return (
     <div
       ref={containerRef}
-      className="h-full w-full min-h-[18rem] cursor-default rounded-2xl overflow-hidden"
+      className="h-full w-full cursor-default overflow-hidden"
       aria-hidden="true"
     />
   );

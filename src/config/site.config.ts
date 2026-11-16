@@ -1,23 +1,33 @@
 export const siteConfig = {
   name: "solidweb",
-  description: "전환과 성과를 설계하는 웹 에이전시. 홈페이지·브랜딩 기획부터 개발까지.",
+  description: "방문에서 매출로 이어지는 웹을 설계하는 에이전시. 전략·전환·측정까지.",
   /** OG/Twitter 공유용 이미지 경로 (1200x630 권장). public 폴더 기준, 예: /og-image.webp */
   ogImage: "/og-image.webp",
   /** OG 이미지 대체 텍스트 (카카오톡·네이버 등 미리보기 접근성) */
   ogImageAlt: "솔리드웹",
   hero: {
-    title: "보여주는 웹이 아니라, 결과를 만드는 웹을.",
-    subtitleMain: "전략 기획부터 전환 설계, 성과 측정까지 한 번에.",
-    subtitleEnd: "디자인을 넘어 비즈니스 성과로 직결되는 웹을 제작하고, 방문을 고객으로 노출을 매출로 이어드는 구조를 설계합니다.",
+    eyebrow: "매출로 이어지는 웹 엔지니어링",
+    titleLine1: "트래픽은 늘었는데 왜 문의가 없을까요?",
+    titleLine2: "팔리는 흐름부터 다시 설계합니다.",
+    /** @deprecated 하위 호환 — titleLine1+2 사용 */
+    title: "트래픽은 늘었는데 왜 문의가 없을까요? 팔리는 흐름부터 다시 설계합니다.",
+    subtitleMain: "전환 목표 설정부터 이탈 방지 UX, 성과 측정까지 결과로 말하는 웹사이트.",
+    subtitleEnd: "",
     support: "",
-    ctaText: "무료 상담 신청하기",
+    ctaText: "무료 상담 받기",
+    ctaSecondaryText: "포트폴리오 보기",
+    ctaSecondaryHref: "/portfolio",
+    pillars: [
+      { label: "전략", text: "기획 단계에서 전환 목표를 먼저 정의합니다." },
+      { label: "전환", text: "방문을 문의·매출로 이어지는 흐름을 설계합니다." },
+      { label: "측정", text: "성과를 보고 개선할 수 있는 구조를 만듭니다." },
+    ],
   },
   nav: {
     consult: "상담 신청",
     items: [
-      { label: "솔리드웹", href: "/" },
+      { label: "홈", href: "/" },
       { label: "포트폴리오", href: "/portfolio" },
-      { label: "문의하기", href: "/contact" },
     ],
   },
   whatWeDo: {
@@ -180,7 +190,7 @@ export const siteConfig = {
   },
   contactPage: {
     heroTitle: "결과를 만드는 웹, 함께 설계합니다.",
-    heroSubtitle: "전략 기획부터 전환 설계, 성과 측정까지. 솔리드웹.",
+    heroSubtitle: "전략·전환·측정까지. 솔리드웹.",
     heroDesc: "의견을 남겨주시면 24시간 이내로 전문가가 연락드립니다.",
     submitLabel: "문의하기",
     sections: {

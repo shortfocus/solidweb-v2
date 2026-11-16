@@ -114,15 +114,20 @@ html:not(.dark) .theme-toggle:hover {
   color: #0f172a;
 }
 
+/* 전역 콘텐츠 폭 — Hero / Header와 동일 */
+.site-container {
+  @apply mx-auto w-full max-w-[90rem] px-5 sm:px-8 md:px-10 lg:px-12;
+}
+
 /* ——— Agency motion (P1) ——— */
 
-/* Hero Dot Grid */
+/* Hero Dot Grid — 풀블리드 위 낮은 opacity, 좌측(카피) 쪽 위주 */
 .hero-dot-grid {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
   background-size: 22px 22px;
-  opacity: 0.35;
-  mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+  opacity: 0.22;
+  mask-image: linear-gradient(to right, black 0%, black 45%, transparent 85%);
+  -webkit-mask-image: linear-gradient(to right, black 0%, black 45%, transparent 85%);
 }
 
 html:not(.dark) .hero-dot-grid {
