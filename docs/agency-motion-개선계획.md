@@ -1,7 +1,7 @@
 # 에이전시형 모션·인터랙션 개선 계획
 
 > 목표: DESIGN/LOVERS 급 에이전시 모션을 참고하되, **솔리드웹 브랜드·기존 Three.js·GEO/SEO 작업을 유지한 채** 모션 레이어를 얹는다.  
-> 상태: **P1 구현 완료** · Our Strength 톤 통일 (1차) · **히어로 풀블리드 임팩트 개편**  
+> 상태: **P1 구현 완료** · **What We Do / Beyond SEO(Our Strength) designlovers식 재편** · 히어로 풀블리드 · 플로팅 헤더  
 > 관련: `docs/geo-ai-고도화-발전방향.md`
 
 ---

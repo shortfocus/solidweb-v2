@@ -5,8 +5,8 @@ import HeroCanvas from "@/components/HeroCanvasWavesBlue";
 const hero = siteConfig.hero;
 ---
 
-<!-- 헤더(h-16)가 document flow에 있으므로 뷰포트에서 헤더 높이를 뺀 영역에 fit -->
-<section class="relative h-[calc(100svh-4rem)] max-h-[calc(100svh-4rem)] overflow-hidden bg-[#0d0d0d]">
+<!-- 플로팅 헤더는 fixed라 히어로는 풀 뷰포트 -->
+<section class="relative h-[100svh] max-h-[100svh] overflow-hidden bg-[#0d0d0d]">
   <div class="absolute inset-0 z-0" aria-hidden="true">
     <HeroCanvas client:load />
   </div>

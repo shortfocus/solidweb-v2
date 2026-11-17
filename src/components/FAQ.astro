@@ -1,30 +1,39 @@
 ---
 import { siteConfig } from "@/config/site.config";
+
+const section = siteConfig.faq;
 ---
 
-<section id="faq" class="border-t border-slate-800 bg-[#0d0d0d] py-20 md:py-28">
+<section id="faq" class="border-t border-white/10 bg-[#0d0d0d] py-20 md:py-28">
   <div class="site-container">
-    <div data-reveal="" class="rounded-2xl border border-slate-800 border-l-4 border-l-[#f43f5e] bg-slate-900/20 px-6 py-5">
-      <h2 class="text-2xl font-bold text-white md:text-3xl">
-        <span class="text-[#f43f5e]">05</span> FAQ
+    <div data-reveal="" class="max-w-3xl">
+      <p class="text-sm font-medium tracking-[0.2em] text-[#f43f5e]">
+        {section.sectionLabel}
+      </p>
+      <h2 class="mt-3 text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
+        {section.title}
       </h2>
-      <p class="mt-3 text-slate-400">
-        {siteConfig.faq.subtitle}
+      <p class="mt-5 max-w-2xl text-base leading-relaxed text-slate-400 md:text-lg">
+        {section.subtitle}
       </p>
     </div>
 
-    <div data-reveal-stagger="" class="mt-14 space-y-2">
+    <div data-reveal-stagger="" class="mt-14 border-t border-white/15">
       {
-        siteConfig.faq.items.map((item) => (
-          <details class="group rounded-xl border border-slate-800 border-l-4 border-l-[#f43f5e]/50 bg-slate-900/30">
-            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-left text-white hover:bg-slate-800/30">
-              <span>
-                <span class="mr-2 text-[#f43f5e]">Q.</span>
+        section.items.map((item) => (
+          <details class="group border-b border-white/15">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-left transition-colors duration-300 hover:text-[#f43f5e] md:py-7 [&::-webkit-details-marker]:hidden">
+              <span class="text-base font-semibold tracking-tight text-white transition-colors duration-300 group-hover:text-[#f43f5e] md:text-lg">
                 {item.q}
               </span>
-              <span class="shrink-0 text-slate-500 transition group-open:rotate-180">▼</span>
+              <span
+                class="shrink-0 text-xl font-light leading-none text-[#f43f5e] transition-transform duration-300 group-open:rotate-45"
+                aria-hidden="true"
+              >
+                +
+              </span>
             </summary>
-            <div class="border-t border-slate-800 px-5 py-4 text-slate-400">
+            <div class="pb-7 pr-10 text-sm leading-relaxed text-slate-400 md:text-[0.95rem]">
               {item.a}
             </div>
           </details>

@@ -63,20 +63,19 @@
 }
 
 /* 라이트 모드: 다크 톤 유틸 오버라이드 */
-html:not(.dark) .theme-header {
-  background-color: #fff !important;
-  border-color: transparent !important;
-  border-width: 0 !important;
+html:not(.dark) .theme-header.scrolled .nav-shell {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 10px 34px rgba(15, 23, 42, 0.1) !important;
 }
 html:not(.dark) [class*="0D0D0D"],
 html:not(.dark) [class*="0d0d0d"] {
   background-color: #fff !important;
   border-color: #e2e8f0;
 }
-html:not(.dark) .theme-header[class*="0D0D0D"],
-html:not(.dark) .theme-header[class*="0d0d0d"] {
-  border-color: transparent !important;
-  border-width: 0 !important;
+html:not(.dark) .theme-header .mobile-menu {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-color: #e2e8f0 !important;
 }
 html:not(.dark) .theme-logo,
 html:not(.dark) .text-white {
@@ -126,6 +125,253 @@ html:not(.dark) .theme-toggle:hover {
 /* 전역 콘텐츠 폭 — Hero / Header와 동일 */
 .site-container {
   @apply mx-auto w-full max-w-[90rem] px-5 sm:px-8 md:px-10 lg:px-12;
+}
+
+/* ——— Floating header (veryeasy-style morph) ——— */
+.site-header {
+  position: fixed;
+  z-index: 50;
+  top: 16px;
+  left: 50%;
+  width: 100%;
+  max-width: 90rem;
+  transform: translateX(-50%);
+  padding: 0 1.25rem;
+  pointer-events: none;
+  transition:
+    width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    top 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.site-header .nav-shell,
+.site-header .mobile-menu,
+.site-header a,
+.site-header button {
+  pointer-events: auto;
+}
+
+.site-header .nav-shell {
+  height: 4rem;
+  padding: 0 0.25rem 0 0.5rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0;
+  box-shadow: none;
+  transition:
+    height 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    padding 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.4s ease,
+    background 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.site-header .theme-logo {
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.site-header .nav-underline .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.site-header .nav-underline .nav-link.is-active::after,
+.site-header .nav-underline .nav-link[aria-current="page"]::after {
+  background: currentColor;
+}
+
+.site-header .nav-underline .nav-link:hover::after {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.site-header .nav-underline .nav-link.is-active:hover::after,
+.site-header .nav-underline .nav-link[aria-current="page"]:hover::after {
+  background: currentColor;
+}
+
+.site-header .theme-logo,
+.site-header .nav-link,
+.site-header .menu-toggle,
+.site-header .nav-cta {
+  transition:
+    color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.4s ease;
+}
+
+.site-header.scrolled {
+  top: 10px;
+  width: min(56rem, calc(100% - 2rem));
+  max-width: min(56rem, calc(100% - 2rem));
+  padding: 0;
+}
+
+/* 스크롤 시 반전: 라이트 필 + 다크 텍스트 */
+.site-header.scrolled .nav-shell {
+  height: 3.5rem;
+  padding: 0 0.75rem 0 1.25rem;
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(15, 23, 42, 0.08);
+  border-radius: 9999px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.site-header.scrolled .theme-logo {
+  color: #0f172a !important;
+}
+
+.site-header.scrolled .nav-underline .nav-link {
+  color: #64748b !important;
+}
+
+.site-header.scrolled .nav-underline .nav-link.is-active,
+.site-header.scrolled .nav-underline .nav-link[aria-current="page"],
+.site-header.scrolled .nav-underline .nav-link:hover {
+  color: #0f172a !important;
+}
+
+.site-header.scrolled .nav-underline .nav-link:hover::after {
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.site-header.scrolled .nav-cta {
+  background: #0f172a !important;
+  color: #fff !important;
+}
+
+.site-header.scrolled .nav-cta:hover {
+  background: #1e293b !important;
+}
+
+.site-header.scrolled .menu-toggle {
+  color: #334155 !important;
+  border-color: rgba(15, 23, 42, 0.18) !important;
+}
+
+.site-header.scrolled .menu-toggle:hover {
+  color: #0f172a !important;
+  border-color: rgba(15, 23, 42, 0.35) !important;
+}
+
+.site-header.scrolled .mobile-menu {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+.site-header.scrolled .mobile-menu .nav-link {
+  color: #64748b !important;
+}
+
+.site-header.scrolled .mobile-menu .nav-link.is-active,
+.site-header.scrolled .mobile-menu .nav-link:hover {
+  color: #0f172a !important;
+  background: rgba(15, 23, 42, 0.06);
+}
+
+.site-header.scrolled .mobile-menu a.rounded-full {
+  background: #0f172a !important;
+  color: #fff !important;
+}
+
+@media (min-width: 640px) {
+  .site-header {
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .site-header {
+    padding: 0 2.5rem;
+  }
+
+  .site-header .nav-shell {
+    padding: 0 0.5rem 0 0.75rem;
+  }
+
+  .site-header.scrolled {
+    width: min(56rem, calc(100% - 2.5rem));
+    max-width: min(56rem, calc(100% - 2.5rem));
+  }
+}
+
+@media (min-width: 1024px) {
+  .site-header {
+    padding: 0 3rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .site-header,
+  .site-header.scrolled {
+    top: 12px;
+    width: calc(100% - 1.5rem);
+    max-width: calc(100% - 1.5rem);
+    padding: 0;
+  }
+
+  .site-header .nav-shell {
+    height: 3.5rem;
+    padding: 0 0.65rem 0 1rem;
+    background: rgba(13, 13, 13, 0.72);
+    border-color: rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .site-header.scrolled .nav-shell {
+    background: rgba(255, 255, 255, 0.94);
+    border-color: rgba(15, 23, 42, 0.08);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.16);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-header .nav-shell {
+    transition: none;
+  }
+}
+
+/* Review vertical marquee — -50% 루프, 헤더 transform과 분리 */
+@keyframes review-marquee-y {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+
+.review-marquee {
+  animation: review-marquee-y var(--duration, 40s) linear infinite;
+}
+
+.review-marquee--reverse {
+  animation-direction: reverse;
+}
+
+.review-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .review-marquee {
+    animation: none;
+  }
 }
 
 /* ——— Agency motion (P1) ——— */

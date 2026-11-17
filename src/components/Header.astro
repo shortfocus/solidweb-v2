@@ -16,13 +16,16 @@ function isActive(href: string): boolean {
 }
 ---
 
-<header class="theme-header relative sticky top-0 z-50 border-0 bg-[#0D0D0D]/80 backdrop-blur-md">
-  <div class="site-container grid h-16 grid-cols-[1fr_auto] items-center gap-4 md:grid-cols-[1fr_auto_1fr]">
-    <a href="/" class="font-logo col-start-1 justify-self-start text-2xl font-bold tracking-tight text-white sm:text-3xl theme-logo">
+<header id="site-header" class="site-header theme-header" data-site-header>
+  <div class="nav-shell grid grid-cols-[1fr_auto] items-center gap-4 md:grid-cols-[1fr_auto_1fr]">
+    <a
+      href="/"
+      class="font-logo theme-logo col-start-1 justify-self-start self-stretch text-[1.35rem] font-normal tracking-tight text-white sm:text-[1.6rem]"
+    >
       {siteConfig.name}
     </a>
 
-    <nav class="nav-underline col-start-2 hidden items-center gap-8 md:flex" aria-label="메인 메뉴">
+    <nav class="nav-underline col-start-2 hidden items-center justify-center gap-8 md:flex" aria-label="메인 메뉴">
       {
         navItems.map((item) => {
           const active = isActive(item.href);
@@ -30,10 +33,8 @@ function isActive(href: string): boolean {
             <a
               href={item.href}
               class:list={[
-                "nav-link border-b-2 pb-1 text-sm font-medium transition-colors",
-                active
-                  ? "border-white text-white"
-                  : "border-transparent text-slate-400 hover:border-white/40 hover:text-white",
+                "nav-link relative inline-flex h-8 items-center text-sm font-medium leading-none transition-colors",
+                active ? "is-active text-white" : "text-slate-400 hover:text-white",
               ]}
               data-href={item.href}
               aria-current={active ? "page" : undefined}
@@ -48,15 +49,17 @@ function isActive(href: string): boolean {
     <div class="col-start-2 flex items-center justify-self-end gap-3 md:col-start-3">
       <a
         href={consultHref}
-        class="nav-cta hidden rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 md:inline-flex"
+        class="nav-cta hidden h-9 items-center rounded-full bg-white px-4 text-sm font-semibold leading-none text-slate-900 transition hover:bg-slate-100 md:inline-flex"
       >
         {consultLabel}
       </a>
 
       <button
         type="button"
-        class="flex h-10 w-10 flex-col items-center justify-center gap-1.5 rounded-full border border-white/20 bg-transparent text-slate-300 transition hover:border-white/40 hover:text-white md:hidden"
+        class="menu-toggle flex h-10 w-10 flex-col items-center justify-center gap-1.5 rounded-full border border-white/20 bg-transparent text-slate-300 transition hover:border-white/40 hover:text-white md:hidden"
         aria-label="메뉴 열기"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
         id="menu-toggle"
       >
         <span class="h-0.5 w-5 bg-current"></span>
@@ -68,34 +71,34 @@ function isActive(href: string): boolean {
 
   <div
     id="mobile-menu"
-    class="absolute inset-x-0 top-full z-50 hidden border-t border-white/10 bg-[#0D0D0D]/95 py-4 shadow-lg backdrop-blur-md md:hidden"
+    class="mobile-menu absolute inset-x-0 top-[calc(100%+0.5rem)] z-50 hidden overflow-hidden rounded-2xl border border-white/10 bg-[#0D0D0D]/95 py-4 shadow-lg backdrop-blur-md md:hidden"
   >
-    <div class="site-container">
-    <nav class="flex flex-col gap-1 text-sm" aria-label="모바일 메뉴">
-      {
-        navItems.map((item) => {
-          const active = isActive(item.href);
-          return (
-            <a
-              href={item.href}
-              class:list={[
-                "nav-link rounded-lg py-2.5 pl-3 font-medium transition-colors",
-                active ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-white",
-              ]}
-              data-href={item.href}
-            >
-              {item.label}
-            </a>
-          );
-        })
-      }
-      <a
-        href={consultHref}
-        class="mt-2 inline-flex items-center justify-center rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-slate-900"
-      >
-        {consultLabel}
-      </a>
-    </nav>
+    <div class="px-5">
+      <nav class="flex flex-col gap-1 text-sm" aria-label="모바일 메뉴">
+        {
+          navItems.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <a
+                href={item.href}
+                class:list={[
+                  "nav-link rounded-lg py-2.5 pl-3 font-medium transition-colors",
+                  active ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-white",
+                ]}
+                data-href={item.href}
+              >
+                {item.label}
+              </a>
+            );
+          })
+        }
+        <a
+          href={consultHref}
+          class="mt-2 inline-flex items-center justify-center rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-slate-900"
+        >
+          {consultLabel}
+        </a>
+      </nav>
     </div>
   </div>
 </header>
@@ -104,7 +107,10 @@ function isActive(href: string): boolean {
   const toggle = document.getElementById("menu-toggle");
   const menu = document.getElementById("mobile-menu");
   if (toggle && menu) {
-    toggle.addEventListener("click", () => menu.classList.toggle("hidden"));
+    toggle.addEventListener("click", () => {
+      const open = menu.classList.toggle("hidden") === false;
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
   }
 
   function setActiveNav() {
@@ -118,10 +124,7 @@ function isActive(href: string): boolean {
         : false;
       link.classList.toggle("text-white", active);
       link.classList.toggle("text-slate-400", !active);
-      if (link.classList.contains("border-b-2")) {
-        link.classList.toggle("border-white", active);
-        link.classList.toggle("border-transparent", !active);
-      }
+      link.classList.toggle("is-active", active);
       if (link.classList.contains("rounded-lg")) {
         link.classList.toggle("bg-white/10", active);
       }

@@ -143,9 +143,14 @@ const jsonLdBreadcrumb = site
     )}
     <slot name="head" />
   </head>
-  <body class="flex min-h-screen flex-col bg-background text-foreground">
+  <body
+    class:list={[
+      "flex min-h-screen flex-col bg-background text-foreground",
+      path === "/" && "home-page",
+    ]}
+  >
     <Header />
-    <main class="flex flex-1 flex-col">
+    <main class:list={["flex flex-1 flex-col", path !== "/" && "pt-24 md:pt-28"]}>
       <slot />
     </main>
     <Footer />

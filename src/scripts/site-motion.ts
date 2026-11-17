@@ -1,5 +1,6 @@
 import { initSmoothScroll, scrollToTarget } from "./smooth-scroll";
 import { initScrollReveal, initHeroReveal } from "./scroll-reveal";
+import { initFloatingHeader } from "./floating-header";
 
 function bindScrollIndicators() {
   document.querySelectorAll<HTMLElement>("[data-scroll-to]").forEach((el) => {
@@ -12,11 +13,12 @@ function bindScrollIndicators() {
   });
 }
 
-/** 전역 모션 초기화: Lenis + reveal + hero + scroll indicator */
+/** 전역 모션 초기화: Lenis + reveal + hero + floating header */
 export function initSiteMotion() {
   if (typeof window === "undefined") return;
 
   initSmoothScroll();
+  initFloatingHeader();
   initHeroReveal();
   initScrollReveal();
   bindScrollIndicators();

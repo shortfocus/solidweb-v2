@@ -1,37 +1,54 @@
 ---
 import { siteConfig } from "@/config/site.config";
+
+const section = siteConfig.whatWeDo;
 ---
 
-<section id="what-we-do" class="border-t border-slate-800 bg-[#0d0d0d] py-20 md:py-28">
+<section id="what-we-do" class="border-t border-white/10 bg-[#0d0d0d] py-20 md:py-28">
   <div class="site-container">
-    <div data-reveal="" class="rounded-2xl border border-slate-800 border-l-4 border-l-[#f43f5e] bg-slate-900/20 px-6 py-5">
-      <h2 class="text-2xl font-bold text-white md:text-3xl">
-        <span class="text-[#f43f5e]">01</span> What We Do
+    <div data-reveal="" class="max-w-3xl">
+      <p class="text-sm font-medium tracking-[0.2em] text-[#f43f5e]">
+        {section.sectionLabel}
+      </p>
+      <h2 class="mt-3 text-4xl font-bold tracking-tight text-white sm:text-5xl md:text-6xl">
+        {section.title}
       </h2>
-      <p class="mt-3 text-slate-400">
-        {siteConfig.whatWeDo.subtitle}
+      <p class="mt-5 max-w-2xl text-base leading-relaxed text-slate-400 md:text-lg">
+        {section.subtitle}
       </p>
     </div>
 
-    <div data-reveal-stagger="" class="mt-14 grid gap-8 md:grid-cols-3">
+    <div
+      data-reveal-stagger=""
+      class="mt-14 grid grid-cols-1 border-t border-white/15 sm:grid-cols-2 lg:grid-cols-3"
+    >
       {
-        siteConfig.whatWeDo.items.map((item) => (
-          <div class="rounded-2xl border border-slate-800 border-t-[#f43f5e]/50 bg-slate-900/30 p-6">
-            <p class="text-sm font-semibold tracking-wide text-[#f43f5e]">{item.label}</p>
-            <h3 class="mt-2 text-xl font-bold text-white">{item.title}</h3>
-            <p class="mt-3 text-base font-medium leading-snug text-slate-200">
-              {item.hook}
-            </p>
-            <p class="mt-3 text-sm leading-relaxed text-slate-400">
+        section.items.map((item) => (
+          <article class="group border-b border-white/15 px-0 py-8 transition-colors duration-300 sm:px-6 sm:py-10 lg:px-8 hover:bg-[#f43f5e]/10">
+            <h3 class="text-lg font-bold tracking-tight text-white transition-colors duration-300 md:text-xl group-hover:text-[#f43f5e]">
+              {item.title}
+            </h3>
+            <p class="mt-3 text-sm leading-relaxed text-slate-400 transition-colors duration-300 md:text-[0.95rem] group-hover:text-[#fda4af]">
               {item.description}
             </p>
-            <ul class="mt-4 space-y-2 text-sm text-slate-500">
-              {item.list.map((li) => (
-                <li>· {li}</li>
-              ))}
-            </ul>
-          </div>
+          </article>
         ))
+      }
+
+      {
+        section.cta && (
+          <a
+            href={section.cta.href}
+            class="group flex min-h-[10rem] items-end border-b border-white/15 bg-[#f43f5e] px-6 py-8 text-left transition hover:bg-[#e11d48] sm:px-6 sm:py-10 lg:px-8"
+          >
+            <span class="text-xl font-bold tracking-tight text-white md:text-2xl">
+              {section.cta.label}
+              <span class="ml-2 inline-block transition group-hover:translate-x-1" aria-hidden="true">
+                →
+              </span>
+            </span>
+          </a>
+        )
       }
     </div>
   </div>
