@@ -1,27 +1,25 @@
 export const siteConfig = {
   name: "solidweb",
-  description: "방문에서 매출로 이어지는 웹을 설계하는 에이전시. 전략·전환·측정까지.",
+  description: "SEO·AEO·GEO에 최적화된 웹을 설계하는 에이전시.",
   /** OG/Twitter 공유용 이미지 경로 (1200x630 권장). public 폴더 기준, 예: /og-image.webp */
   ogImage: "/og-image.webp",
   /** OG 이미지 대체 텍스트 (카카오톡·네이버 등 미리보기 접근성) */
   ogImageAlt: "솔리드웹",
   hero: {
-    eyebrow: "매출로 이어지는 웹 엔지니어링",
-    titleLine1: "트래픽은 늘었는데 왜 문의가 없을까요?",
-    titleLine2: "팔리는 흐름부터 다시 설계합니다.",
+    eyebrow: "차세대 검색 환경에 맞춘 웹 제작 기준",
+    titleLine1: "단순 노출을 넘어,",
+    titleLine2: "AI가 먼저 추천하는 웹사이트",
     /** @deprecated 하위 호환 — titleLine1+2 사용 */
-    title: "트래픽은 늘었는데 왜 문의가 없을까요? 팔리는 흐름부터 다시 설계합니다.",
-    subtitleMain: "전환 목표 설정부터 이탈 방지 UX, 성과 측정까지 결과로 말하는 웹사이트.",
+    title: "단순 노출을 넘어, AI가 먼저 추천하는 웹사이트",
+    subtitleLine1: "SEO · AEO · GEO 시대에 최적화된",
+    subtitleLine2: "반응형 웹사이트 제작 파트너.",
+    /** @deprecated 하위 호환 — subtitleLine1+2 사용 */
+    subtitleMain: "SEO · AEO · GEO 시대에 최적화된 반응형 웹사이트 제작 파트너.",
     subtitleEnd: "",
     support: "",
-    ctaText: "무료 상담 받기",
+    ctaText: "카톡 상담하기",
     ctaSecondaryText: "포트폴리오 보기",
     ctaSecondaryHref: "/portfolio",
-    pillars: [
-      { label: "전략", text: "기획 단계에서 전환 목표를 먼저 정의합니다." },
-      { label: "전환", text: "방문을 문의·매출로 이어지는 흐름을 설계합니다." },
-      { label: "측정", text: "성과를 보고 개선할 수 있는 구조를 만듭니다." },
-    ],
   },
   nav: {
     consult: "상담 신청",
@@ -32,51 +30,55 @@ export const siteConfig = {
   },
   whatWeDo: {
     title: "01 What We Do",
-    subtitle: "우리는 다양한 분야에서 차별화된 비즈니스를 제공합니다.",
+    subtitle: "검색·답변·AI 추천까지, 노출의 전 과정을 설계합니다.",
     items: [
       {
         number: 1,
-        title: "서비스 기획",
-        description: "체계적인 기획부터 완성도 높은 설계까지 차별화된 서비스 경험을 제공합니다.",
-        list: ["서비스 기획 및 설계", "디자인 및 개발", "운영 및 유지보수"],
+        label: "SEO",
+        title: "검색엔진 최적화",
+        hook: "검색 로봇이 읽고, 첫 페이지에 노출되는 구조를 만듭니다.",
+        description:
+          "네이버·구글에서 브랜드가 첫 페이지에 정확히 노출되도록, 검색 로봇이 좋아하는 웹 표준과 페이지 구조를 설계합니다.",
+        list: ["웹 표준·시맨틱 구조", "메타·속도·인덱싱", "키워드·랜딩 설계"],
       },
       {
         number: 2,
-        title: "웹/앱 개발",
-        description: "전문적인 개발 기술력으로 사용자에게 최적화된 웹/앱 서비스를 제공합니다.",
-        list: ["프론트엔드 개발", "백엔드 개발", "모바일 앱 개발"],
+        label: "AEO",
+        title: "검색 답변 최적화",
+        hook: "고객의 질문이 우리 사이트의 정답으로 바로 뜨게 합니다.",
+        description:
+          "“어디가 잘할까?” 같은 문장형 질문에 검색이 우리 정보를 정답으로 띄우도록 핵심 콘텐츠와 FAQ 흐름을 정리합니다.",
+        list: ["질문형 정보 구조", "FAQ·답변 블록", "설득 카피 흐름"],
       },
       {
         number: 3,
-        title: "브랜딩",
-        description: "고객사의 브랜드를 이해하고 차별화된 브랜드 가치를 구축합니다.",
-        list: ["브랜드 전략 수립", "BI/CI 디자인", "마케팅 컨설팅"],
+        label: "GEO",
+        title: "생성형 AI 최적화",
+        hook: "AI가 우리 브랜드를 먼저 인용·추천하도록 설계합니다.",
+        description:
+          "ChatGPT·제미나이·퍼플렉시티가 업체를 추천할 때 우리 비즈니스를 먼저 인용하도록 AI 친화적 데이터·콘텐츠 구조를 구축합니다.",
+        list: ["AI 인용 가능 콘텐츠", "구조화 데이터·신뢰 신호", "브랜드 엔티티 정리"],
       },
     ],
   },
   ourStrength: {
     title: "02 Our Strength",
-    subtitle: "차별화된 경쟁력으로 고객사의 성공을 지원합니다.",
+    subtitle: "검색과 AI가 선택하는 웹을, 구조부터 콘텐츠까지 만듭니다.",
     items: [
       {
         icon: "shield" as const,
-        title: "전문성",
-        description: "다양한 분야의 전문가들이 모여 최적의 솔루션을 제공합니다.",
+        title: "웹 표준 구조 설계",
+        description: "속도·시맨틱·메타를 기반으로 SEO 체력을 만듭니다.",
       },
       {
         icon: "lightbulb" as const,
-        title: "혁신성",
-        description: "최신 기술 트렌드를 반영하여 혁신적인 서비스를 제공합니다.",
-      },
-      {
-        icon: "heart" as const,
-        title: "고객 중심",
-        description: "고객의 니즈를 최우선으로 생각하며, 최상의 만족도를 제공합니다.",
+        title: "질문형 콘텐츠 설계",
+        description: "고객 질문에 바로 답이 되는 AEO 정보 흐름을 잡습니다.",
       },
       {
         icon: "trending-up" as const,
-        title: "지속적인 성장",
-        description: "고객사와 함께 성장하며, 지속적인 발전을 추구합니다.",
+        title: "AI 인용 데이터 설계",
+        description: "스키마·엔티티·신뢰 신호로 GEO 추천 가능성을 높입니다.",
       },
     ],
   },

@@ -17,12 +17,11 @@ import { siteConfig } from "@/config/site.config";
       {
         siteConfig.whatWeDo.items.map((item) => (
           <div class="rounded-2xl border border-slate-800 border-t-[#f43f5e]/50 bg-slate-900/30 p-6">
-            <div class="flex h-10 w-10 items-center justify-center rounded-xl border border-[#f43f5e]/40 bg-[#f43f5e] text-sm font-bold text-white">
-              {item.number}
-            </div>
-            <h3 class="mt-6 text-xl font-bold text-white">
-              {item.title}
-            </h3>
+            <p class="text-sm font-semibold tracking-wide text-[#f43f5e]">{item.label}</p>
+            <h3 class="mt-2 text-xl font-bold text-white">{item.title}</h3>
+            <p class="mt-3 text-base font-medium leading-snug text-slate-200">
+              {item.hook}
+            </p>
             <p class="mt-3 text-sm leading-relaxed text-slate-400">
               {item.description}
             </p>

@@ -150,27 +150,6 @@ const jsonLdBreadcrumb = site
     </main>
     <Footer />
     <PrivacyPanel />
-    <!-- 카카오톡 플로팅: 클릭 시 카카오 페이지로 바로 이동 -->
-    <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
-      <a
-        href={siteConfig.kakaoChatUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="flex items-center justify-center gap-1.5 rounded-full bg-[#FEE500] px-5 py-3 text-[#191919] shadow-lg transition hover:scale-105 hover:shadow-xl"
-        aria-label="톡상담"
-      >
-        <span class="text-sm font-bold">💬 톡상담</span>
-      </a>
-      <a
-        href={siteConfig.kakaoChannelUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="flex items-center justify-center gap-1.5 rounded-full bg-[#FEE500] px-5 py-3 text-[#191919] shadow-lg transition hover:scale-105 hover:shadow-xl"
-        aria-label="채널 추가"
-      >
-        <span class="text-sm font-bold">➕ 채널 추가</span>
-      </a>
-    </div>
     <script>
       import "@/scripts/site-motion";
     </script>

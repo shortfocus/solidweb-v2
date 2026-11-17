@@ -16,34 +16,36 @@ function isActive(href: string): boolean {
 }
 ---
 
-<header class="theme-header sticky top-0 z-50 border-b border-white/10 bg-[#0D0D0D]/80 backdrop-blur-md">
-  <div class="site-container flex h-16 items-center justify-between">
-    <a href="/" class="font-logo text-xl font-bold tracking-tight text-white sm:text-2xl theme-logo">
+<header class="theme-header relative sticky top-0 z-50 border-0 bg-[#0D0D0D]/80 backdrop-blur-md">
+  <div class="site-container grid h-16 grid-cols-[1fr_auto] items-center gap-4 md:grid-cols-[1fr_auto_1fr]">
+    <a href="/" class="font-logo col-start-1 justify-self-start text-2xl font-bold tracking-tight text-white sm:text-3xl theme-logo">
       {siteConfig.name}
     </a>
 
-    <div class="flex items-center gap-3 sm:gap-5">
-      <nav class="nav-underline hidden md:flex md:items-center md:gap-7" aria-label="메인 메뉴">
-        {
-          navItems.map((item) => {
-            const active = isActive(item.href);
-            return (
-              <a
-                href={item.href}
-                class:list={[
-                  "nav-link text-sm font-medium transition-colors",
-                  active ? "text-white" : "text-slate-400 hover:text-white",
-                ]}
-                data-href={item.href}
-                aria-current={active ? "page" : undefined}
-              >
-                {item.label}
-              </a>
-            );
-          })
-        }
-      </nav>
+    <nav class="nav-underline col-start-2 hidden items-center gap-8 md:flex" aria-label="메인 메뉴">
+      {
+        navItems.map((item) => {
+          const active = isActive(item.href);
+          return (
+            <a
+              href={item.href}
+              class:list={[
+                "nav-link border-b-2 pb-1 text-sm font-medium transition-colors",
+                active
+                  ? "border-white text-white"
+                  : "border-transparent text-slate-400 hover:border-white/40 hover:text-white",
+              ]}
+              data-href={item.href}
+              aria-current={active ? "page" : undefined}
+            >
+              {item.label}
+            </a>
+          );
+        })
+      }
+    </nav>
 
+    <div class="col-start-2 flex items-center justify-self-end gap-3 md:col-start-3">
       <a
         href={consultHref}
         class="nav-cta hidden rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 md:inline-flex"
@@ -51,25 +53,24 @@ function isActive(href: string): boolean {
         {consultLabel}
       </a>
 
-      <div class="flex items-center md:hidden">
-        <button
-          type="button"
-          class="flex h-10 w-10 flex-col items-center justify-center gap-1.5 rounded-full border border-white/20 bg-transparent text-slate-300 transition hover:border-white/40 hover:text-white"
-          aria-label="메뉴 열기"
-          id="menu-toggle"
-        >
-          <span class="h-0.5 w-5 bg-current"></span>
-          <span class="h-0.5 w-5 bg-current"></span>
-          <span class="h-0.5 w-5 bg-current"></span>
-        </button>
-      </div>
+      <button
+        type="button"
+        class="flex h-10 w-10 flex-col items-center justify-center gap-1.5 rounded-full border border-white/20 bg-transparent text-slate-300 transition hover:border-white/40 hover:text-white md:hidden"
+        aria-label="메뉴 열기"
+        id="menu-toggle"
+      >
+        <span class="h-0.5 w-5 bg-current"></span>
+        <span class="h-0.5 w-5 bg-current"></span>
+        <span class="h-0.5 w-5 bg-current"></span>
+      </button>
     </div>
   </div>
 
   <div
     id="mobile-menu"
-    class="site-container hidden border-t border-white/10 bg-[#0D0D0D]/95 py-4 backdrop-blur-md md:hidden"
+    class="absolute inset-x-0 top-full z-50 hidden border-t border-white/10 bg-[#0D0D0D]/95 py-4 shadow-lg backdrop-blur-md md:hidden"
   >
+    <div class="site-container">
     <nav class="flex flex-col gap-1 text-sm" aria-label="모바일 메뉴">
       {
         navItems.map((item) => {
@@ -95,6 +96,7 @@ function isActive(href: string): boolean {
         {consultLabel}
       </a>
     </nav>
+    </div>
   </div>
 </header>
 
@@ -116,6 +118,10 @@ function isActive(href: string): boolean {
         : false;
       link.classList.toggle("text-white", active);
       link.classList.toggle("text-slate-400", !active);
+      if (link.classList.contains("border-b-2")) {
+        link.classList.toggle("border-white", active);
+        link.classList.toggle("border-transparent", !active);
+      }
       if (link.classList.contains("rounded-lg")) {
         link.classList.toggle("bg-white/10", active);
       }

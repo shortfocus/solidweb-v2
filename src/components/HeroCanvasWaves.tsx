@@ -2,8 +2,8 @@ import * as React from "react";
 import * as THREE from "three";
 
 /**
- * [보관·2번] three.js points/waves
- * 활성 히어로는 HeroCanvas.tsx (1번 네트워크)
+ * [보관] three.js points/waves — 슬레이트/로즈
+ * 활성: HeroCanvasWavesBlue.tsx · 네트워크: HeroCanvasNetwork.tsx
  */
 const SEPARATION = 0.14;
 const AMOUNT_X = 48;

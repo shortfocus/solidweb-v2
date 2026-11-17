@@ -63,11 +63,20 @@
 }
 
 /* 라이트 모드: 다크 톤 유틸 오버라이드 */
-html:not(.dark) .theme-header,
+html:not(.dark) .theme-header {
+  background-color: #fff !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+}
 html:not(.dark) [class*="0D0D0D"],
 html:not(.dark) [class*="0d0d0d"] {
   background-color: #fff !important;
   border-color: #e2e8f0;
+}
+html:not(.dark) .theme-header[class*="0D0D0D"],
+html:not(.dark) .theme-header[class*="0d0d0d"] {
+  border-color: transparent !important;
+  border-width: 0 !important;
 }
 html:not(.dark) .theme-logo,
 html:not(.dark) .text-white {

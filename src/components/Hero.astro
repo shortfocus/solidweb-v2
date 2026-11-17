@@ -1,6 +1,6 @@
 ---
 import { siteConfig } from "@/config/site.config";
-import HeroCanvas from "@/components/HeroCanvas";
+import HeroCanvas from "@/components/HeroCanvasWavesBlue";
 
 const hero = siteConfig.hero;
 ---
@@ -22,9 +22,8 @@ const hero = siteConfig.hero;
     aria-hidden="true"
   ></div>
 
-  <div class="pointer-events-none site-container relative z-10 flex h-full flex-col py-6 sm:py-8">
-    <!-- 좌측 카피 스택 -->
-    <div class="flex min-h-0 flex-1 flex-col justify-center md:max-w-[62%] lg:max-w-[58%]">
+  <div class="pointer-events-none site-container relative z-10 flex h-full flex-col justify-center py-6 sm:py-8">
+    <div class="md:max-w-[62%] lg:max-w-[58%]">
       <p
         data-hero-reveal=""
         class="inline-flex items-center gap-2 text-sm font-medium text-slate-300"
@@ -39,7 +38,7 @@ const hero = siteConfig.hero;
 
       <h1
         data-hero-reveal=""
-        class="mt-4 text-[1.55rem] font-bold leading-[1.28] tracking-tight text-white sm:mt-5 sm:text-4xl sm:leading-[1.22] md:text-[2.75rem] md:tracking-[-0.02em] lg:text-5xl"
+        class="mt-4 text-[1.85rem] font-bold leading-[1.25] tracking-tight text-white sm:mt-5 sm:text-5xl sm:leading-[1.18] md:text-6xl md:tracking-[-0.02em] lg:text-[4rem]"
       >
         <span class="block">{hero.titleLine1}</span>
         <span class="mt-1 block">{hero.titleLine2}</span>
@@ -47,14 +46,17 @@ const hero = siteConfig.hero;
 
       <p
         data-hero-reveal=""
-        class="mt-4 max-w-[42ch] text-sm font-medium leading-relaxed text-slate-300 sm:mt-5 sm:text-base md:max-w-[48ch] md:text-lg"
+        class="mt-4 max-w-[20rem] text-sm font-medium leading-relaxed text-slate-300 sm:mt-5 sm:max-w-[42ch] sm:text-base md:max-w-[48ch] md:text-lg"
       >
-        {hero.subtitleMain}
+        <span class="block">{hero.subtitleLine1}</span>
+        <span class="block">{hero.subtitleLine2}</span>
       </p>
 
       <div data-hero-reveal="" class="pointer-events-auto mt-6 flex flex-wrap items-center gap-3 sm:mt-8">
         <a
-          href="/contact"
+          href={siteConfig.kakaoChatUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           class="inline-flex items-center justify-center rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 sm:py-3"
         >
           {hero.ctaText}
@@ -66,21 +68,6 @@ const hero = siteConfig.hero;
           {hero.ctaSecondaryText}
         </a>
       </div>
-    </div>
-
-    <!-- 하단 필라: 뷰포트 안 고정 -->
-    <div
-      data-hero-reveal=""
-      class="pointer-events-none shrink-0 grid gap-4 border-t border-white/10 pt-5 sm:grid-cols-3 sm:gap-10 sm:pt-6 lg:gap-14"
-    >
-      {
-        hero.pillars.map((pillar) => (
-          <div>
-            <p class="text-xs font-semibold tracking-widest text-[#f43f5e]">{pillar.label}</p>
-            <p class="mt-1.5 text-sm leading-snug text-slate-400">{pillar.text}</p>
-          </div>
-        ))
-      }
     </div>
   </div>
 </section>
